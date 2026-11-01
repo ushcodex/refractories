@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Admin and Moderation Dashboard — The Refractories Photo Bank">
+  <meta name="theme-color" content="#07070c">
+  <meta name="robots" content="noindex, nofollow">
+
+  <title>Admin Dashboard — The Refractories</title>
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+  <!-- ─── Navigation ─── -->
+  <nav class="nav" role="navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">
+        <span class="brand-icon">🛡️</span>
+        <span>
+          The Refractories
+          <span class="brand-sub">Admin Moderation</span>
+        </span>
+      </a>
+
+      <div class="nav-links">
+        <a href="/" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span>Gallery</span>
+        </a>
+        <a href="/upload.html" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span>Upload</span>
+        </a>
+        <button class="nav-link active" id="admin-logout-btn" style="display: none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span>Logout</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ─── Main Content ─── -->
+  <main class="main-content">
+    <div class="container">
+
+      <!-- ─── Admin Login Section (Shown if unauthenticated) ─── -->
+      <section class="fade-in" id="admin-login-section" style="max-width: 440px; margin: 60px auto 0;">
+        <div class="card text-center" style="padding: 40px 24px;">
+          <div style="font-size: 3.5rem; margin-bottom: 16px;">🛡️</div>
+          <h2>Admin Login</h2>
+          <p class="text-secondary" style="font-size: 0.9rem; margin-top: 8px; margin-bottom: 24px;">
+            Enter your secret admin key to access content moderation, reported photos, and photo deletion.
+          </p>
+
+          <div class="form-group text-left">
+            <label class="form-label" for="admin-key-input">Admin Key</label>
+            <input type="password" class="form-input" id="admin-key-input" 
+                   placeholder="Enter ADMIN_CODE" autocomplete="current-password">
+          </div>
+
+          <button class="btn btn-primary btn-block btn-lg mt-md" id="admin-login-btn">
+            Authenticate
+          </button>
+        </div>
+      </section>
+
+      <!-- ─── Admin Dashboard (Shown after authentication) ─── -->
+      <div id="admin-dashboard-section" style="display: none;">
+
+        <!-- Dashboard Header -->
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
+          <div>
+            <h1>Moderation Dashboard</h1>
+            <p class="text-secondary" style="font-size: 0.9rem;">
+              Manage class repository photos, review viewer reports, and monitor storage limits.
+            </p>
+          </div>
+          <div class="tag tag-accent" style="padding: 6px 14px; font-size: 0.85rem;">
+            🟢 Admin Mode Active
+          </div>
+        </div>
+
+        <!-- System Stats / Storage Health -->
+        <div class="stats-bar" id="admin-stats-bar" style="margin-bottom: 32px;">
+          <div class="stat-item">
+            <div class="stat-value" id="admin-stat-reports">0</div>
+            <div class="stat-label">Pending Reports</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="admin-stat-photos">—</div>
+            <div class="stat-label">Total Photos</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="admin-stat-storage">—</div>
+            <div class="stat-label">Storage Used (8GB Cap)</div>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="filter-bar" style="position: static; margin-bottom: 24px;">
+          <button class="filter-chip active" id="tab-btn-reports">
+            🚩 Reported Photos (<span id="report-tab-count">0</span>)
+          </button>
+          <button class="filter-chip" id="tab-btn-all">
+            🖼️ All Photos Management
+          </button>
+        </div>
+
+        <!-- ── Tab 1: Reported Photos Queue ── -->
+        <section id="tab-reports-view">
+          <div id="reports-list" style="display: flex; flex-direction: column; gap: 16px;">
+            <!-- Rendered by JS -->
+          </div>
+
+          <div class="empty-state" id="reports-empty-state" style="display: none;">
+            <div class="empty-state-icon">✅</div>
+            <h3>No Pending Reports</h3>
+            <p>All photos in the repository are in good standing.</p>
+          </div>
+        </section>
+
+        <!-- ── Tab 2: All Photos Management ── -->
+        <section id="tab-all-view" style="display: none;">
+          <div style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+            <div class="search-input-wrap" style="flex: 1; min-width: 220px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" class="search-input" id="admin-photo-search" placeholder="Search filename, event, or uploader...">
+            </div>
+            <button class="btn btn-secondary btn-sm" id="admin-reload-photos-btn">Refresh List</button>
+          </div>
+
+          <div class="photo-grid" id="admin-photo-grid">
+            <!-- Rendered by JS -->
+          </div>
+
+          <div class="loading-more" id="admin-photos-loading" style="display: none;">
+            <div class="spinner"></div>
+          </div>
+      <!-- Footer -->
+      <footer class="text-center" style="padding: 40px 0 20px;">
+        <p class="text-secondary" style="font-size: 0.85rem;">
+          Built with ❤️ by <a href="https://usman.engineer" target="_blank" rel="noopener noreferrer" style="color: var(--accent); font-weight: 500;">Usman</a> · Powered by <a href="https://ushcodex.tech" target="_blank" rel="noopener noreferrer" style="color: var(--accent); font-weight: 500;">ushcodex.tech</a>
+        </p>
+      </footer>
+
+    </div>
+  </main>
+
+  <!-- ─── Delete Confirmation Modal ─── -->
+  <div class="modal-backdrop" id="delete-modal-backdrop"></div>
+  <div class="modal" id="delete-modal">
+    <h3 style="color: var(--error);">⚠️ Confirm Deletion</h3>
+    <p class="text-secondary" style="font-size: 0.9rem; margin-top: 8px;">
+      Are you sure you want to permanently delete this photo from Cloudflare R2 and the database? This action cannot be undone.
+    </p>
+    <div id="delete-modal-preview" style="margin: 16px 0; text-align: center;">
+      <img id="delete-modal-img" src="" style="max-height: 180px; margin: 0 auto; border-radius: 8px; object-fit: contain;">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary btn-sm" id="delete-cancel-btn">Cancel</button>
+      <button class="btn btn-danger btn-sm" id="delete-confirm-btn">Yes, Delete Permanently</button>
+    </div>
+  </div>
+
+  <!-- ─── Scripts ─── -->
+  <script type="module">
+    import { apiFetch, showToast, escapeHtml, formatDate, formatBytes, getAdminCode, setAdminCode, clearAdminCode, ICONS } from '/js/utils.js';
+
+    // DOM references
+    const loginSection = document.getElementById('admin-login-section');
+    const dashboardSection = document.getElementById('admin-dashboard-section');
+    const keyInput = document.getElementById('admin-key-input');
+    const loginBtn = document.getElementById('admin-login-btn');
+    const logoutBtn = document.getElementById('admin-logout-btn');
+
+    const tabBtnReports = document.getElementById('tab-btn-reports');
+    const tabBtnAll = document.getElementById('tab-btn-all');
+    const tabReportsView = document.getElementById('tab-reports-view');
+    const tabAllView = document.getElementById('tab-all-view');
+
+    const reportsList = document.getElementById('reports-list');
+    const reportsEmptyState = document.getElementById('reports-empty-state');
+    const reportTabCount = document.getElementById('report-tab-count');
+    const statReports = document.getElementById('admin-stat-reports');
+    const statPhotos = document.getElementById('admin-stat-photos');
+    const statStorage = document.getElementById('admin-stat-storage');
+
+    const adminPhotoGrid = document.getElementById('admin-photo-grid');
+    const adminPhotoSearch = document.getElementById('admin-photo-search');
+    const adminReloadBtn = document.getElementById('admin-reload-photos-btn');
+
+    const deleteModalBackdrop = document.getElementById('delete-modal-backdrop');
+    const deleteModal = document.getElementById('delete-modal');
+    const deleteModalImg = document.getElementById('delete-modal-img');
+    const deleteCancelBtn = document.getElementById('delete-cancel-btn');
+    const deleteConfirmBtn = document.getElementById('delete-confirm-btn');
+
+    let pendingDeletePhotoId = null;
+    let allPhotosList = [];
+
+    // ─── Authentication Flow ───
+    async function checkAuth() {
+      const code = getAdminCode();
+      if (!code) {
+        showLoginUI();
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/admin/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code }),
+        });
+        const data = await res.json();
+        if (data.authorized) {
+          showDashboardUI();
+          loadDashboardData();
+        } else {
+          clearAdminCode();
+          showLoginUI();
+        }
+      } catch {
+        showLoginUI();
+      }
+    }
+
+    loginBtn.addEventListener('click', async () => {
+      const code = keyInput.value.trim();
+      if (!code) {
+        showToast('Please enter your admin code', 'warning');
+        return;
+      }
+
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Verifying...';
+
+      try {
+        const res = await fetch('/api/admin/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code }),
+        });
+        const data = await res.json();
+
+        if (data.authorized) {
+          setAdminCode(code);
+          showToast('Welcome, Admin! 🛡️', 'success');
+          showDashboardUI();
+          loadDashboardData();
+        } else {
+          showToast('Invalid admin code', 'error');
+        }
+      } catch (err) {
+        showToast(`Verification error: ${err.message}`, 'error');
+      } finally {
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Authenticate';
+      }
+    });
+
+    keyInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') loginBtn.click();
+    });
+
+    logoutBtn.addEventListener('click', () => {
+      clearAdminCode();
+      showToast('Logged out of admin panel', 'info');
+      showLoginUI();
+    });
+
+    function showLoginUI() {
+      loginSection.style.display = 'block';
+      dashboardSection.style.display = 'none';
+      logoutBtn.style.display = 'none';
+    }
+
+    function showDashboardUI() {
+      loginSection.style.display = 'none';
+      dashboardSection.style.display = 'block';
+      logoutBtn.style.display = 'flex';
+    }
+
+    // ─── Dashboard Data Loading ───
+    async function loadDashboardData() {
+      await Promise.all([
+        loadReports(),
+        loadStats(),
+        loadAllPhotos(),
+      ]);
+    }
+
+    async function loadStats() {
+      try {
+        const stats = await apiFetch('/api/stats');
+        statPhotos.textContent = stats.total_photos || 0;
+        const usedBytes = stats.total_size || 0;
+        statStorage.textContent = `${formatBytes(usedBytes)} / 8 GB`;
+      } catch (err) {
+        console.error('Stats error:', err);
+      }
+    }
+
+    // ─── Reports Moderation ───
+    async function loadReports() {
+      try {
+        const res = await fetch('/api/reports', {
+          headers: { 'X-Admin-Code': getAdminCode() },
+        });
+        const data = await res.json();
+        const reports = data.reports || [];
+
+        reportTabCount.textContent = reports.length;
+        statReports.textContent = reports.length;
+
+        renderReports(reports);
+      } catch (err) {
+        console.error('Reports load error:', err);
+      }
+    }
+
+    function renderReports(reports) {
+      reportsList.innerHTML = '';
+      if (reports.length === 0) {
+        reportsEmptyState.style.display = 'block';
+        return;
+      }
+      reportsEmptyState.style.display = 'none';
+
+      reports.forEach(r => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.style.display = 'flex';
+        card.style.alignItems = 'center';
+        card.style.gap = '20px';
+        card.style.flexWrap = 'wrap';
+
+        card.innerHTML = `
+          <img src="/api/image/${r.thumb_key}" style="width: 80px; height: 80px; border-radius: 8px; object-fit: cover; flex-shrink: 0;">
+          <div style="flex: 1; min-width: 200px;">
+            <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 4px;">
+              <span class="tag" style="background: rgba(248, 113, 113, 0.2); color: var(--error); border-color: rgba(248, 113, 113, 0.3);">
+                🚩 ${escapeHtml(r.reason)}
+              </span>
+              <span class="text-secondary" style="font-size: 0.75rem;">${formatDate(r.reported_at)}</span>
+            </div>
+            <div style="font-size: 0.9rem; font-weight: 500;">
+              ${escapeHtml(r.original_filename || 'Photo')} · ${escapeHtml(r.event_name || 'Event')}
+            </div>
+            ${r.details ? `<p class="text-secondary" style="font-size: 0.8rem; margin-top: 4px; font-style: italic;">"${escapeHtml(r.details)}"</p>` : ''}
+            <div class="text-secondary" style="font-size: 0.75rem; margin-top: 4px;">
+              Uploader: ${escapeHtml(r.uploader_name || 'Anonymous')}
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px; flex-shrink: 0;">
+            <button class="btn btn-secondary btn-sm dismiss-report-btn" data-report-id="${r.report_id}">Dismiss Report</button>
+            <button class="btn btn-danger btn-sm delete-photo-btn" data-photo-id="${r.photo_id}" data-thumb="/api/image/${r.thumb_key}">
+              🗑️ Delete Photo
+            </button>
+          </div>
+        `;
+
+        card.querySelector('.dismiss-report-btn').addEventListener('click', () => dismissReport(r.report_id, card));
+        card.querySelector('.delete-photo-btn').addEventListener('click', () => {
+          openDeleteModal(r.photo_id, `/api/image/${r.thumb_key}`);
+        });
+
+        reportsList.appendChild(card);
+      });
+    }
+
+    async function dismissReport(reportId, cardEl) {
+      try {
+        const res = await fetch(`/api/reports/${reportId}`, {
+          method: 'DELETE',
+          headers: { 'X-Admin-Code': getAdminCode() },
+        });
+        if (res.ok) {
+          cardEl.remove();
+          showToast('Report dismissed', 'success');
+          loadReports();
+        }
+      } catch (err) {
+        showToast(`Dismiss failed: ${err.message}`, 'error');
+      }
+    }
+
+    // ─── All Photos Management ───
+    async function loadAllPhotos() {
+      try {
+        const data = await apiFetch('/api/photos?limit=100');
+        allPhotosList = data.photos || [];
+        renderAdminPhotoGrid(allPhotosList);
+      } catch (err) {
+        console.error('All photos error:', err);
+      }
+    }
+
+    function renderAdminPhotoGrid(photos) {
+      adminPhotoGrid.innerHTML = '';
+      photos.forEach(photo => {
+        const card = document.createElement('div');
+        card.className = 'photo-card';
+        card.style.position = 'relative';
+
+        card.innerHTML = `
+          <img src="/api/image/${photo.thumb_key}" alt="${escapeHtml(photo.original_filename || 'Photo')}">
+          <div class="photo-overlay" style="opacity: 1; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 60%);">
+            <span class="photo-event">${escapeHtml(photo.event_name || 'Photo')}</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+              <span class="photo-date">${photo.date_taken ? formatDate(photo.date_taken) : ''}</span>
+              <button class="btn btn-danger btn-sm admin-grid-delete-btn" style="padding: 4px 8px; font-size: 0.7rem;" title="Delete Photo">
+                🗑️ Delete
+              </button>
+            </div>
+          </div>
+        `;
+
+        card.querySelector('.admin-grid-delete-btn').addEventListener('click', (e) => {
+          e.stopPropagation();
+          openDeleteModal(photo.id, `/api/image/${photo.thumb_key}`);
+        });
+
+        adminPhotoGrid.appendChild(card);
+      });
+    }
+
+    adminPhotoSearch.addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      if (!q) {
+        renderAdminPhotoGrid(allPhotosList);
+        return;
+      }
+      const filtered = allPhotosList.filter(p => 
+        (p.original_filename && p.original_filename.toLowerCase().includes(q)) ||
+        (p.event_name && p.event_name.toLowerCase().includes(q)) ||
+        (p.uploader_name && p.uploader_name.toLowerCase().includes(q))
+      );
+      renderAdminPhotoGrid(filtered);
+    });
+
+    adminReloadBtn.addEventListener('click', () => loadAllPhotos());
+
+    // ─── Tabs Navigation ───
+    tabBtnReports.addEventListener('click', () => {
+      tabBtnReports.classList.add('active');
+      tabBtnAll.classList.remove('active');
+      tabReportsView.style.display = 'block';
+      tabAllView.style.display = 'none';
+      loadReports();
+    });
+
+    tabBtnAll.addEventListener('click', () => {
+      tabBtnAll.classList.add('active');
+      tabBtnReports.classList.remove('active');
+      tabReportsView.style.display = 'none';
+      tabAllView.style.display = 'block';
+      loadAllPhotos();
+    });
+
+    // ─── Delete Modal Handlers ───
+    function openDeleteModal(photoId, thumbUrl) {
+      pendingDeletePhotoId = photoId;
+      deleteModalImg.src = thumbUrl;
+      deleteModalBackdrop.classList.add('open');
+      deleteModal.classList.add('open');
+    }
+
+    function closeDeleteModal() {
+      pendingDeletePhotoId = null;
+      deleteModalBackdrop.classList.remove('open');
+      deleteModal.classList.remove('open');
+      deleteModalImg.src = '';
+    }
+
+    deleteCancelBtn.addEventListener('click', () => closeDeleteModal());
+    deleteModalBackdrop.addEventListener('click', () => closeDeleteModal());
+
+    deleteConfirmBtn.addEventListener('click', async () => {
+      if (!pendingDeletePhotoId) return;
+
+      deleteConfirmBtn.disabled = true;
+      deleteConfirmBtn.textContent = 'Deleting...';
+
+      try {
+        const res = await fetch(`/api/photos/${pendingDeletePhotoId}`, {
+          method: 'DELETE',
+          headers: { 'X-Admin-Code': getAdminCode() },
+        });
+
+        if (!res.ok) {
+          throw new Error(await res.text());
+        }
+
+        showToast('Photo permanently deleted 🗑️', 'success');
+        closeDeleteModal();
+        loadDashboardData();
+      } catch (err) {
+        showToast(`Delete failed: ${err.message}`, 'error');
+      } finally {
+        deleteConfirmBtn.disabled = false;
+        deleteConfirmBtn.textContent = 'Yes, Delete Permanently';
+      }
+    });
+
+    // Init
+    checkAuth();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,19 @@
+name = "refractories-photo-bank-preview"
+pages_build_output_dir = "public"
+compatibility_date = "2024-09-25"
+
+# Local development and preview bindings only.
+# Do not point these at the production database or bucket.
+[[d1_databases]]
+binding = "DB"
+database_name = "refractories-photos-recovery"
+database_id = "00000000-0000-0000-0000-000000000000"
+
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "refractories-photos-recovery"
+
+[vars]
+MAX_BATCH_SIZE = "200"
+MAX_FILE_SIZE = "512000"
+MAX_TOTAL_STORAGE_BYTES = "8589934592"

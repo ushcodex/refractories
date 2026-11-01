@@ -170,10 +170,20 @@ The backups contain private project data. They must not be committed to Git.
 | Max content width | 1400 px |
 | Navigation height | 64 px |
 
+## Phase 6 - Source recovery
+
+- Recovered the live HTML, CSS, JavaScript, and manifest into `public/`.
+- Reconstructed the Pages Functions into `functions/api/`.
+- Added `schema.sql`, `seed.sql`, `wrangler.toml`, and `package.json`.
+- Compared eight public response shapes against production. All eight matched.
+- Ran local smoke tests with local D1 and R2 bindings.
+- Details and inferred behaviour are recorded in `docs/RECOVERY.md`.
+- No production resource was changed.
+
 ## Open gaps
 
-- No local source code.
-- No Git-connected source in Cloudflare Pages.
+- No local source code was available before recovery.
+- No Git-connected source existed in Cloudflare Pages.
 - Cloudflare Access coverage not verified.
 - Admin page has no Access challenge.
-- Source recovery will be required before building the yearbook form.
+- Yearbook data model and content still need owner decisions.

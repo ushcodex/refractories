@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="The Refractories Photo Bank — U19 Chemical Engineering Class of 2024, ABU Zaria. Our shared photo memories from inception to graduation.">
+  <meta name="theme-color" content="#07070c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <title>The Refractories — Photo Bank</title>
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+  <!-- ─── Navigation ─── -->
+  <nav class="nav" role="navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">
+        <span class="brand-icon">🔥</span>
+        <span>
+          The Refractories
+          <span class="brand-sub">Photo Bank</span>
+        </span>
+      </a>
+
+      <div class="nav-links">
+        <a href="/" class="nav-link active" id="nav-gallery">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span>Gallery</span>
+        </a>
+        <a href="/upload.html" class="nav-link" id="nav-upload">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span>Upload</span>
+        </a>
+        <a href="/about.html" class="nav-link" id="nav-about">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          <span>About</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ─── Main Content ─── -->
+  <main class="main-content">
+    <div class="container">
+
+      <!-- Hero -->
+      <section class="hero fade-in">
+        <div class="hero-badge">
+          <span class="dot"></span>
+          U19 Chemical Engineering · ABU Zaria
+        </div>
+        <h1>
+          <span class="gradient-text">The Refractories</span>
+          <br>Photo Bank
+        </h1>
+        <p class="hero-subtitle">
+          Our shared memories, from inception to graduation. 
+          Browse, download, and share photos from the Class of 2024.
+        </p>
+      </section>
+
+      <!-- Stats -->
+      <section class="stats-bar fade-in" id="stats-bar">
+        <div class="stat-item">
+          <div class="stat-value" id="stat-photos">—</div>
+          <div class="stat-label">Photos</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="stat-collections">—</div>
+          <div class="stat-label">Collections</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="stat-contributors">—</div>
+          <div class="stat-label">Contributors</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="stat-years">—</div>
+          <div class="stat-label">Years Covered</div>
+        </div>
+      </section>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar" id="filter-bar">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- Photo Grid -->
+      <div class="photo-grid" id="photo-grid">
+        <!-- Photos loaded dynamically -->
+      </div>
+
+      <!-- Loading indicator -->
+      <div class="loading-more" id="loading-indicator" style="display: none;">
+        <div class="spinner"></div>
+      </div>
+
+      <!-- Empty state -->
+      <div class="empty-state" id="empty-state" style="display: none;">
+        <div class="empty-state-icon">📷</div>
+        <h3>No Photos Yet</h3>
+        <p>Be the first to contribute! Upload your class photos and help build our shared memory bank.</p>
+        <a href="/upload.html" class="btn btn-primary btn-lg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Upload Photos
+        </a>
+      </div>
+
+      <!-- Scroll sentinel for infinite scroll -->
+      <div id="scroll-sentinel" style="height: 1px;"></div>
+
+      <!-- Bulk Selection Toolbar (appears when select mode is active) -->
+      <div class="bulk-toolbar" id="bulk-toolbar" style="display: none;">
+        <div class="bulk-toolbar-inner">
+          <div class="bulk-toolbar-info">
+            <span class="bulk-count" id="bulk-selected-count">0 selected</span>
+          </div>
+          <div class="bulk-toolbar-actions">
+            <button class="btn btn-secondary btn-sm" id="bulk-select-all-btn">Select All</button>
+            <button class="btn btn-primary btn-sm" id="bulk-download-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+              Download ZIP
+            </button>
+            <button class="btn btn-secondary btn-sm" id="bulk-cancel-btn">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <footer class="gallery-footer text-center" style="padding: 40px 0 20px;">
+        <p class="text-secondary" style="font-size: 0.85rem;">
+          Built with ❤️ by <a href="https://usman.engineer" target="_blank" rel="noopener noreferrer" style="color: var(--accent); font-weight: 500;">Usman</a> · Powered by <a href="https://ushcodex.tech" target="_blank" rel="noopener noreferrer" style="color: var(--accent); font-weight: 500;">ushcodex.tech</a>
+        </p>
+        <p style="margin-top: 10px;">
+          <a href="/admin.html" class="text-secondary" style="font-size: 0.75rem; opacity: 0.5; text-decoration: underline;">Admin & Moderation</a>
+        </p>
+      </footer>
+
+    </div>
+  </main>
+
+  <!-- ─── JSZip library for in-browser client-side ZIP packaging ─── -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+  <!-- ─── Scripts ─── -->
+  <script type="module">
+    import { GalleryController } from '/js/gallery.js';
+    import { LightboxController } from '/js/lightbox.js';
+
+    // Initialize lightbox
+    const lightbox = new LightboxController();
+
+    // Initialize gallery
+    const gallery = new GalleryController({
+      gridEl: document.getElementById('photo-grid'),
+      filterBarEl: document.getElementById('filter-bar'),
+      statsEl: document.getElementById('stats-bar'),
+      emptyEl: document.getElementById('empty-state'),
+      loadingEl: document.getElementById('loading-indicator'),
+      bulkToolbarEl: document.getElementById('bulk-toolbar'),
+      onPhotoClick: (photo, index, allPhotos) => {
+        lightbox.open(photo, index, allPhotos);
+      },
+    });
+
+    // Check for deep link to specific photo
+    const params = new URLSearchParams(window.location.search);
+    const photoId = params.get('photo');
+
+    gallery.init().then(() => {
+      if (photoId) {
+        const idx = gallery.allPhotos.findIndex(p => p.id === photoId);
+        if (idx >= 0) {
+          lightbox.open(gallery.allPhotos[idx], idx, gallery.allPhotos);
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>

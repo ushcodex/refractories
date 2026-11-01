@@ -1,0 +1,14 @@
+{
+  "name": "refractories-photo-bank",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler pages dev public",
+    "db:init": "wrangler d1 execute refractories-photos-recovery --local --file=./schema.sql",
+    "db:seed": "wrangler d1 execute refractories-photos-recovery --local --file=./seed.sql"
+  },
+  "devDependencies": {
+    "wrangler": "4.156.0"
+  }
+}

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Upload your class photos to The Refractories Photo Bank — U19 Chemical Engineering, ABU Zaria.">
+  <meta name="theme-color" content="#07070c">
+
+  <title>Upload — The Refractories Photo Bank</title>
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+  <!-- ─── Navigation ─── -->
+  <nav class="nav" role="navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">
+        <span class="brand-icon">🔥</span>
+        <span>
+          The Refractories
+          <span class="brand-sub">Photo Bank</span>
+        </span>
+      </a>
+      <div class="nav-links">
+        <a href="/" class="nav-link" id="nav-gallery">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span>Gallery</span>
+        </a>
+        <a href="/upload.html" class="nav-link active" id="nav-upload">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span>Upload</span>
+        </a>
+        <a href="/about.html" class="nav-link" id="nav-about">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          <span>About</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ─── Main Content ─── -->
+  <main class="main-content">
+    <div class="container">
+      <div class="upload-layout">
+
+        <!-- ─── Upload Form ─── -->
+        <div id="upload-form-wrap">
+
+          <!-- Step 1: Collection Details -->
+          <section class="upload-step fade-in">
+            <div class="step-header">
+              <div class="step-number" id="step1-num">1</div>
+              <div>
+                <h3>Collection Details</h3>
+                <p class="text-secondary" style="font-size: 0.85rem;">Tell us about these photos</p>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="uploader-name">Your Name *</label>
+                  <input type="text" class="form-input" id="uploader-name" 
+                         placeholder="e.g., Ahmed Ibrahim" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="event-name">Event / Occasion</label>
+                  <input type="text" class="form-input" id="event-name" 
+                         placeholder="e.g., Graduation Day" list="event-suggestions">
+                  <datalist id="event-suggestions">
+                    <option value="100L Orientation">
+                    <option value="200L Lab Sessions">
+                    <option value="300L Industrial Visit">
+                    <option value="400L">
+                    <option value="500L Final Year Project">
+                    <option value="Graduation Day">
+                    <option value="Class Hangout">
+                    <option value="Study Group">
+                    <option value="Departmental Week">
+                    <option value="Sports / Social Event">
+                    <option value="Random / Candid">
+                  </datalist>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="description">Description (optional)</label>
+                <textarea class="form-textarea" id="description" rows="2"
+                          placeholder="Any additional context about these photos..."></textarea>
+              </div>
+            </div>
+          </section>
+
+          <!-- Step 2: Select Photos -->
+          <section class="upload-step fade-in">
+            <div class="step-header">
+              <div class="step-number" id="step2-num">2</div>
+              <div>
+                <h3>Select Photos</h3>
+                <p class="text-secondary" style="font-size: 0.85rem;">Choose up to 200 images at once</p>
+              </div>
+            </div>
+
+            <div class="drop-zone" id="drop-zone">
+              <input type="file" id="file-input" multiple accept="image/*" 
+                     aria-label="Select photos to upload">
+              <span class="drop-zone-icon">📁</span>
+              <div class="drop-zone-text">
+                <strong>Tap to select photos</strong> or drag & drop here
+              </div>
+              <div class="drop-zone-hint">
+                JPEG, PNG, HEIC, WebP · Max 200 photos per batch · Photos will be auto-compressed
+              </div>
+            </div>
+
+            <!-- Preview grid of selected images -->
+            <div class="preview-grid" id="preview-grid"></div>
+
+            <div class="mt-md" id="selection-summary" style="display: none;">
+              <span class="tag tag-accent" id="selected-count">0 photos selected</span>
+              <button class="btn btn-sm btn-secondary" id="clear-all-btn" style="margin-left: 8px;">Clear All</button>
+              <button class="btn btn-sm btn-secondary" id="add-more-btn" style="margin-left: 4px;">+ Add More</button>
+            </div>
+          </section>
+
+          <!-- Step 3: Upload Progress -->
+          <section class="upload-step" id="upload-progress-section" style="display: none;">
+            <div class="step-header">
+              <div class="step-number" id="step3-num">3</div>
+              <div>
+                <h3>Uploading</h3>
+                <p class="text-secondary" style="font-size: 0.85rem;" id="upload-status-text">Preparing...</p>
+              </div>
+            </div>
+
+            <!-- Overall progress -->
+            <div class="upload-summary" id="upload-summary">
+              <div style="flex: 1;">
+                <div class="upload-summary-text" id="upload-summary-text">
+                  <strong>0</strong> / 0 photos uploaded
+                </div>
+                <div class="upload-overall-progress">
+                  <div class="upload-overall-fill" id="upload-overall-fill"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Per-file progress list -->
+            <div class="upload-progress-list" id="upload-progress-list">
+              <!-- Populated by JS -->
+            </div>
+
+            <div class="mt-lg" id="upload-actions" style="display: none;">
+              <button class="btn btn-primary" id="retry-failed-btn" style="display: none;">
+                ↻ Retry Failed
+              </button>
+              <a href="/" class="btn btn-secondary">
+                ← View Gallery
+              </a>
+            </div>
+          </section>
+
+          <!-- Upload Button -->
+          <div class="mt-lg" id="upload-btn-wrap">
+            <button class="btn btn-primary btn-lg btn-block" id="start-upload-btn" disabled>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Start Upload
+            </button>
+            <p class="form-hint text-center mt-md">
+              Photos are compressed client-side before upload. Original files are not modified.
+            </p>
+          </div>
+
+        </div><!-- /upload-form-wrap -->
+
+      <!-- Footer -->
+      <footer class="text-center" style="padding: 32px 0 16px;">
+        <p class="text-secondary" style="font-size: 0.85rem;">
+          Built with ❤️ by <a href="https://usman.engineer" target="_blank" rel="noopener noreferrer" style="color: var(--accent); font-weight: 500;">Usman</a> · Powered by <a href="https://ushcodex.tech" target="_blank" rel="noopener noreferrer" style="color: var(--accent); font-weight: 500;">ushcodex.tech</a>
+        </p>
+        <p style="margin-top: 10px;">
+          <a href="/admin.html" class="text-secondary" style="font-size: 0.75rem; opacity: 0.5; text-decoration: underline;">Admin & Moderation</a>
+        </p>
+      </footer>
+
+    </div>
+  </main>
+
+  <!-- ─── Scripts ─── -->
+  <script type="module">
+    import { UploadManager } from '/js/upload.js';
+    import { showToast, escapeHtml, formatBytes } from '/js/utils.js';
+
+    // ─── DOM references ───
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const previewGrid = document.getElementById('preview-grid');
+    const selectionSummary = document.getElementById('selection-summary');
+    const selectedCountEl = document.getElementById('selected-count');
+    const clearAllBtn = document.getElementById('clear-all-btn');
+    const addMoreBtn = document.getElementById('add-more-btn');
+
+    const startUploadBtn = document.getElementById('start-upload-btn');
+    const uploadBtnWrap = document.getElementById('upload-btn-wrap');
+    const progressSection = document.getElementById('upload-progress-section');
+    const progressList = document.getElementById('upload-progress-list');
+    const uploadSummaryText = document.getElementById('upload-summary-text');
+    const uploadOverallFill = document.getElementById('upload-overall-fill');
+    const uploadStatusText = document.getElementById('upload-status-text');
+    const uploadActions = document.getElementById('upload-actions');
+    const retryFailedBtn = document.getElementById('retry-failed-btn');
+
+    // ─── Upload Manager ───
+    const manager = new UploadManager({
+      onFileAdded(entry) {
+        // Add preview thumbnail
+        const item = document.createElement('div');
+        item.className = 'preview-item';
+        item.id = `preview-${entry.id}`;
+        item.innerHTML = `
+          <img src="${entry.previewUrl}" alt="${escapeHtml(entry.name)}">
+          <button class="remove-btn" data-id="${entry.id}" title="Remove">✕</button>
+        `;
+        item.querySelector('.remove-btn').addEventListener('click', (e) => {
+          e.stopPropagation();
+          manager.removeFile(entry.id);
+          item.remove();
+          updateSelectionUI();
+        });
+        previewGrid.appendChild(item);
+        updateSelectionUI();
+      },
+
+      onFileRemoved(id) {
+        const el = document.getElementById(`preview-${id}`);
+        if (el) el.remove();
+        updateSelectionUI();
+      },
+
+      onProcessing(entry) {
+        updateProgressItem(entry.id, '⏳', `Compressing ${entry.name}...`, 'processing', entry.progress);
+      },
+
+      onProgress(entry) {
+        const statusText = entry.status === 'uploading' ? 'Uploading...' : 'Compressing...';
+        updateProgressItem(entry.id, '⏳', `${statusText} ${Math.round(entry.progress)}%`, entry.status, entry.progress);
+      },
+
+      onFileComplete(entry) {
+        updateProgressItem(entry.id, '✓', `${entry.name} — ${formatBytes(entry.compressedSize)}`, 'success', 100);
+      },
+
+      onFileError(entry, err) {
+        updateProgressItem(entry.id, '✗', `${entry.name} — ${err.message}`, 'error', 0);
+      },
+
+      onAllComplete(stats) {
+        uploadStatusText.textContent = 'Upload complete!';
+        uploadActions.style.display = 'flex';
+
+        if (stats.failed > 0) {
+          retryFailedBtn.style.display = 'inline-flex';
+          showToast(`${stats.completed} uploaded, ${stats.failed} failed`, 'warning');
+        } else {
+          showToast(`All ${stats.completed} photos uploaded successfully! 🎉`, 'success', 5000);
+        }
+      },
+
+      onStatsUpdate(stats) {
+        const pct = stats.total > 0 ? ((stats.completed + stats.failed) / stats.total * 100) : 0;
+        uploadSummaryText.innerHTML = `<strong>${stats.completed}</strong> / ${stats.total} photos uploaded` +
+          (stats.failed > 0 ? ` · <span style="color: var(--error)">${stats.failed} failed</span>` : '');
+        uploadOverallFill.style.width = `${pct}%`;
+      },
+    });
+
+    // ─── File Selection ───
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        manager.addFiles(e.target.files);
+        fileInput.value = ''; // Reset to allow re-selecting same files
+      }
+    });
+
+    // Drag & drop
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('drag-over');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('drag-over');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('drag-over');
+      if (e.dataTransfer.files.length > 0) {
+        manager.addFiles(e.dataTransfer.files);
+      }
+    });
+
+    // Add more button
+    addMoreBtn.addEventListener('click', () => fileInput.click());
+
+    // Clear all
+    clearAllBtn.addEventListener('click', () => {
+      manager.clearAll();
+      previewGrid.innerHTML = '';
+      updateSelectionUI();
+    });
+
+    function updateSelectionUI() {
+      const count = manager.files.size;
+      if (count > 0) {
+        selectionSummary.style.display = 'block';
+        selectedCountEl.textContent = `${count} photo${count !== 1 ? 's' : ''} selected`;
+        startUploadBtn.disabled = false;
+      } else {
+        selectionSummary.style.display = 'none';
+        startUploadBtn.disabled = true;
+      }
+    }
+
+    // ─── Start Upload ───
+    startUploadBtn.addEventListener('click', () => {
+      const uploaderName = document.getElementById('uploader-name').value.trim();
+      if (!uploaderName) {
+        showToast('Please enter your name', 'warning');
+        document.getElementById('uploader-name').focus();
+        return;
+      }
+
+      const eventName = document.getElementById('event-name').value.trim();
+      const description = document.getElementById('description').value.trim();
+
+      manager.setCollection({
+        uploaderName,
+        eventName,
+        description,
+      });
+
+      // Show progress section, hide upload button
+      progressSection.style.display = 'block';
+      uploadBtnWrap.style.display = 'none';
+      uploadStatusText.textContent = 'Processing & uploading...';
+
+      // Initialize progress list
+      progressList.innerHTML = '';
+      for (const [id, entry] of manager.files) {
+        addProgressItem(id, entry.name, entry.previewUrl);
+      }
+
+      // Start!
+      manager.start();
+    });
+
+    // Retry failed
+    retryFailedBtn.addEventListener('click', () => {
+      retryFailedBtn.style.display = 'none';
+      uploadActions.style.display = 'none';
+      uploadStatusText.textContent = 'Retrying failed uploads...';
+      manager.retryFailed();
+    });
+
+    // ─── Progress List Helpers ───
+    function addProgressItem(id, name, thumbUrl) {
+      const item = document.createElement('div');
+      item.className = 'upload-item';
+      item.id = `progress-${id}`;
+      item.innerHTML = `
+        <img class="upload-item-thumb" src="${thumbUrl}" alt="">
+        <div class="upload-item-info">
+          <div class="upload-item-name">${escapeHtml(name)}</div>
+          <div class="upload-item-status" id="status-${id}">Queued...</div>
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="bar-${id}"></div>
+          </div>
+        </div>
+        <div class="upload-item-icon" id="icon-${id}">⏳</div>
+      `;
+      progressList.appendChild(item);
+    }
+
+    function updateProgressItem(id, icon, statusText, statusClass, progress) {
+      const statusEl = document.getElementById(`status-${id}`);
+      const barEl = document.getElementById(`bar-${id}`);
+      const iconEl = document.getElementById(`icon-${id}`);
+      const itemEl = document.getElementById(`progress-${id}`);
+
+      if (statusEl) {
+        statusEl.textContent = statusText;
+        statusEl.className = `upload-item-status ${statusClass}`;
+      }
+      if (barEl) {
+        barEl.style.width = `${progress}%`;
+        barEl.className = `progress-bar-fill ${statusClass}`;
+      }
+      if (iconEl) iconEl.textContent = icon;
+      if (itemEl) {
+        itemEl.className = `upload-item ${statusClass}`;
+        // Auto-scroll to keep active item visible
+        if (statusClass === 'processing' || statusClass === 'uploading') {
+          itemEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }
+    }
+  </script>
+
+</body>
+</html>
