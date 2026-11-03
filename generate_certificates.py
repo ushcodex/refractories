@@ -1,4 +1,4 @@
-﻿"""
+"""
 generate_certificates.py
 Generates lean certificate PDFs (~680KB each) and WebP preview images (~120KB each).
 Run from the repo root: python generate_certificates.py
