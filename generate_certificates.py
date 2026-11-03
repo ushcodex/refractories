@@ -1,6 +1,6 @@
 """
 generate_certificates.py
-Generates lean certificate PDFs (~680KB each) and WebP preview images (~120KB each).
+Generates lean certificate PDFs and WebP preview images, plus small grid thumbnails.
 Run from the repo root: python generate_certificates.py
 """
 
@@ -26,8 +26,10 @@ def build_base_template():
     try:
         img_info = src.extract_image(25)
         im = Image.open(io.BytesIO(img_info['image'])).convert('RGB')
+        if im.width > 1600:
+            im = im.resize((1600, int(im.height * 1600 / im.width)), Image.LANCZOS)
         buf = io.BytesIO()
-        im.save(buf, format='JPEG', quality=75, optimize=True)
+        im.save(buf, format='JPEG', quality=50, optimize=True)
         src[0].replace_image(25, stream=buf.getvalue())
     except Exception as e:
         print(f"  [warn] Could not recompress background image: {e}")
@@ -53,8 +55,6 @@ def generate():
 
     print("Building lean base templateâ€¦")
     base_bytes = build_base_template()
-
-    all_pdf = fitz.open()   # combined collection
 
     for idx, c in enumerate(certs):
         slug = c['slug']
@@ -136,6 +136,10 @@ def generate():
                           'uri': url})
 
         # â”€â”€ 7. Save PDF (lean) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        try:
+            doc.subset_fonts()
+        except Exception as exc:
+            print(f"   [warn] Could not subset fonts: {exc}")
         pdf_bytes = doc.tobytes(deflate=True, garbage=4, clean=True)
         pdf_path  = f"public/certificates/pdf/{slug}.pdf"
         with open(pdf_path, 'wb') as fh:
@@ -154,18 +158,21 @@ def generate():
         img_path   = f"public/certificates/img/{slug}.webp"
         with open(img_path, 'wb') as fh:
             fh.write(webp_bytes)
-        print(f"   IMG: {len(webp_bytes) // 1024} KB â†’ {img_path}")
+        print(f"   IMG: {len(webp_bytes) // 1024} KB -> {img_path}")
 
-        # Add to combined collection
-        all_pdf.insert_pdf(fitz.open(stream=pdf_bytes, filetype='pdf'))
+        # Small thumbnail for the certificate grid.
+        thumb = img.copy()
+        thumb.thumbnail((520, 520), Image.LANCZOS)
+        thumb_buf = io.BytesIO()
+        thumb.save(thumb_buf, format='WEBP', quality=70, optimize=True)
+        thumb_path = f"public/certificates/img/{slug}_thumb.webp"
+        with open(thumb_path, 'wb') as fh:
+            fh.write(thumb_buf.getvalue())
+        print(f"   THUMB: {len(thumb_buf.getvalue()) // 1024} KB -> {thumb_path}")
+
         doc.close()
 
-    # â”€â”€ Combined PDF â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    all_path = "public/certificates/pdf/all-certificates-2024.pdf"
-    all_pdf.save(all_path, deflate=True, garbage=4, clean=True)
-    all_pdf.close()
-    print(f"\nDone â€” {len(certs)} certificates generated.")
-    print(f"Collection: {os.path.getsize(all_path) // 1024} KB â†’ {all_path}")
+    print(f"\nDone - {len(certs)} certificates generated.")
 
 
 if __name__ == '__main__':

@@ -476,8 +476,6 @@ function validateStep(step) {
   return ok;
 }
 
-function renderTurnstile() {}
-
 async function verifyIdentity() {
   clearFieldErrors();
   const rosterId = $('roster-select').value;

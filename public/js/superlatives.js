@@ -129,8 +129,6 @@ async function loadResults() {
   }
 }
 
-function renderTurnstile() {}
-
 function showBallot() {
   $('identity-panel').style.display = 'none';
   $('ballot-panel').style.display = 'block';

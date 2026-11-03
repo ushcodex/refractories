@@ -70,13 +70,11 @@
             <select id="roster-select" required>
               <option value="">Select your name</option>
             </select>
-            <p class="hint">Only U19CE, U19PL, and U21CE names are listed.</p>
             <p class="error" data-error="roster_id"></p>
           </div>
           <div class="yb-field full" data-field="reg_number">
             <label for="reg-number">Registration number <span class="required">*</span></label>
             <input id="reg-number" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="e.g. U19CE1234">
-            <p class="hint">Your registration number is only used to confirm your identity. It is not shown anywhere.</p>
             <p class="error" data-error="reg_number"></p>
           </div>
         </div>
@@ -154,7 +152,7 @@
           <div class="yb-field" data-field="whatsapp">
             <label for="whatsapp">WhatsApp number (optional)</label>
             <input id="whatsapp" type="tel" maxlength="30" placeholder="+234 ...">
-            <p class="hint">Only used for class coordination. It is never shown on your public profile.</p>
+            <p class="hint">Never shown publicly.</p>
             <p class="error" data-error="whatsapp"></p>
           </div>
           <div class="yb-field">
@@ -375,7 +373,7 @@
         </div>
 
         <div class="yb-note" style="margin-top:16px;">
-          <strong>Privacy:</strong> your registration number is never shown. Your phone number is never shown on your public profile. You can edit or remove your profile later with your private edit link.
+          <strong>Privacy:</strong> your registration number and phone number are never shown publicly. You can edit or remove your profile later with your private edit link.
         </div>
 
         <p class="error" id="submit-error" role="alert" style="margin-top:10px;"></p>

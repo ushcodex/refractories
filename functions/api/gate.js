@@ -1,4 +1,5 @@
-import { createGateCookie, getGateSession, checkRateLimit } from '../_lib/gate.js';
+import { createGateCookie, getGateSession } from '../_lib/gate.js';
+import { checkRateLimit, fuzzyMatch } from '../_lib/yearbook.js';
 import { json } from '../_lib/http.js';
 
 const QUESTION =
@@ -13,10 +14,10 @@ function safeNext(value) {
 
 export async function onRequestGet({ request, env }) {
   const session = await getGateSession(request, env);
-  if (session.ok) return json({ authorized: true, siteKey: '', question: '' }, 200, { 'cache-control': 'no-store' });
+  if (session.ok) return json({ authorized: true, question: '' }, 200, { 'cache-control': 'no-store' });
 
   return json(
-    { authorized: false, siteKey: '', question: QUESTION },
+    { authorized: false, question: QUESTION },
     200,
     { 'cache-control': 'no-store' }
   );
@@ -44,37 +45,4 @@ export async function onRequestPost({ request, env }) {
   } catch {
     return json({ error: 'Could not verify the answer.' }, 500);
   }
-}
-
-function fuzzyMatch(answer, target, threshold = 0.7) {
-  const a = (answer || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-  const b = (target || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-  if (!a || !b) return false;
-  const distance = levenshtein(a, b);
-  const similarity = 1 - distance / Math.max(a.length, b.length);
-  return similarity >= threshold;
-}
-
-function levenshtein(a, b) {
-  if (a === b) return 0;
-  if (!a.length) return b.length;
-  if (!b.length) return a.length;
-
-  const previous = new Array(b.length + 1);
-  const current = new Array(b.length + 1);
-  for (let j = 0; j <= b.length; j++) previous[j] = j;
-
-  for (let i = 1; i <= a.length; i++) {
-    current[0] = i;
-    for (let j = 1; j <= b.length; j++) {
-      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
-      current[j] = Math.min(
-        current[j - 1] + 1,
-        previous[j] + 1,
-        previous[j - 1] + cost
-      );
-    }
-    for (let j = 0; j <= b.length; j++) previous[j] = current[j];
-  }
-  return previous[b.length];
 }

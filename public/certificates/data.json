@@ -1,0 +1,209 @@
+[
+  {
+    "id": "fyb-1",
+    "number": 1,
+    "category": "FYB Committee",
+    "name": "Hayatu Umar Yahaya",
+    "role": "Chairman of the FYB Committee",
+    "slug": "hayatu-umar-yahaya",
+    "description": "Presented to Hayatu Umar Yahaya in recognition of your outstanding leadership, vision and unwavering dedication as Chairman of the FYB Committee. You led with wisdom, sacrifice and exemplary commitment, coordinating the affairs of the final year with excellence and ensuring our set had a memorable and successful final year."
+  },
+  {
+    "id": "fyb-2",
+    "number": 2,
+    "category": "FYB Committee",
+    "name": "Hadassah Oluwatobi Ayoola",
+    "role": "Vice Chairman",
+    "slug": "hadassah-oluwatobi-ayoola",
+    "description": "Presented to Hadassah Oluwatobi Ayoola in recognition of your loyal support, diligence and committed service as Vice Chairman. You stood as a dependable pillar to the committee, demonstrating grace, responsibility and a genuine passion for the success of our final year activities."
+  },
+  {
+    "id": "fyb-3",
+    "number": 3,
+    "category": "FYB Committee",
+    "name": "Hassan Ibrahim Badaru",
+    "role": "Financial Secretary",
+    "slug": "hassan-ibrahim-badaru",
+    "description": "Presented to Hassan Ibrahim Badaru in recognition of your exceptional integrity, transparency and dedicated service as Financial Secretary. You managed our collective resources with utmost accountability and trust, proving yourself a custodian of honour and responsibility."
+  },
+  {
+    "id": "fyb-4",
+    "number": 4,
+    "category": "FYB Committee",
+    "name": "Muhammad Sajjad Islam",
+    "role": "Logistic Officer",
+    "slug": "muhammad-sajjad-islam",
+    "description": "Presented to Muhammad Sajjad Islam in recognition of your outstanding diligence and selfless service as Logistic Officer. Your tireless efforts, organizational skills and commitment to seamless execution were vital to the success of all our engagements."
+  },
+  {
+    "id": "fyb-5",
+    "number": 5,
+    "category": "FYB Committee",
+    "name": "Dangana Munir Magaji",
+    "role": "Asst. Secretary General",
+    "slug": "dangana-munir-magaji",
+    "description": "Presented to Dangana Munir Magaji in recognition of your dedicated and commendable service as Assistant Secretary General. Your attention to detail, administrative support and unwavering commitment greatly enhanced the effectiveness of the committee."
+  },
+  {
+    "id": "fyb-6",
+    "number": 6,
+    "category": "FYB Committee",
+    "name": "Oham Sally Delight",
+    "role": "Secretary General",
+    "slug": "oham-sally-delight",
+    "description": "Presented to Oham Sally Delight in recognition of your exceptional administrative prowess, dedication and meritorious service as Secretary General. You served as the engine room of the committee, with excellent record-keeping, communication and devotion to duty."
+  },
+  {
+    "id": "fyb-7",
+    "number": 7,
+    "category": "FYB Committee",
+    "name": "Ahmadu Musa Gwoza",
+    "role": "Member",
+    "slug": "ahmadu-musa-gwoza",
+    "description": "Presented to Ahmadu Musa Gwoza in recognition of your valuable contributions and committed service as a Member of the FYB Committee. Your active participation, ideas and willingness to serve contributed immensely to the achievements of the committee."
+  },
+  {
+    "id": "fyb-8",
+    "number": 8,
+    "category": "FYB Committee",
+    "name": "Muhammed Fatimat Onozasi",
+    "role": "Chief Planner",
+    "slug": "muhammed-fatimat-onozasi",
+    "description": "Presented to Muhammed Fatimat Onozasi in recognition of your brilliant creativity, foresight and outstanding service as Chief Planner. Your innovative planning, attention to detail and strategic thinking were instrumental in making our final year memorable."
+  },
+  {
+    "id": "fyb-9",
+    "number": 9,
+    "category": "FYB Committee",
+    "name": "Jibrin Suleiman",
+    "role": "Logistics Officer",
+    "slug": "jibrin-suleiman",
+    "description": "Presented to Jibrin Suleiman in recognition of your exceptional hard work, reliability and selfless service as Logistics Officer. You worked tirelessly behind the scenes to ensure every arrangement was in place, demonstrating true spirit of service."
+  },
+  {
+    "id": "fyb-10",
+    "number": 10,
+    "category": "FYB Committee",
+    "name": "Penuel Noel Dautuwe",
+    "role": "Social",
+    "slug": "penuel-noel-dautuwe",
+    "description": "Presented to Penuel Noel Dautuwe in recognition of your outstanding vibrancy and dedicated service as Social Officer. You brought life, joy and colour to our activities, fostering unity and unforgettable social memories for the class."
+  },
+  {
+    "id": "fyb-11",
+    "number": 11,
+    "category": "FYB Committee",
+    "name": "Maryam Shuaibu",
+    "role": "Media & Publicity",
+    "slug": "maryam-shuaibu",
+    "description": "Presented to Maryam Shuaibu in recognition of your exceptional creativity and dedicated service as Media & Publicity Officer. Through your lens and publicity efforts, you captured our moments and projected the image of our set with excellence and pride."
+  },
+  {
+    "id": "merit-1",
+    "number": 1,
+    "category": "Merit Certification",
+    "name": "Nuradeen Abdulsamad",
+    "role": "Tutorials",
+    "slug": "nuradeen-abdulsamad",
+    "description": "Presented to Nuradeen Abdulsamad in recognition of your meritorious academic support and invaluable contribution through tutorials. Your willingness to share knowledge, explain difficult concepts and uplift your colleagues academically is deeply appreciated and worthy of emulation."
+  },
+  {
+    "id": "merit-2",
+    "number": 2,
+    "category": "Merit Certification",
+    "name": "Hafsat Yunusa",
+    "role": "Tutor",
+    "slug": "hafsat-yunusa",
+    "description": "Presented to Hafsat Yunusa in recognition of your selfless academic service and dedication as a Tutor. You gave your time and knowledge generously to ensure the academic growth of others, embodying true scholarship and sisterhood."
+  },
+  {
+    "id": "merit-3",
+    "number": 3,
+    "category": "Merit Certification",
+    "name": "Litgwei Elias Filibus",
+    "role": "Service",
+    "slug": "litgwei-elias-filibus",
+    "description": "Presented to Litgwei Elias Filibus in recognition of your exceptional and selfless service to the class. Your contributions, though often quiet, have been impactful, consistent and worthy of commendation."
+  },
+  {
+    "id": "merit-4",
+    "number": 4,
+    "category": "Merit Certification",
+    "name": "Hassan Surajudeen",
+    "role": "Tutor",
+    "slug": "hassan-surajudeen",
+    "description": "Presented to Hassan Surajudeen in recognition of your outstanding academic support and commitment as a Tutor. Your guidance, intellectual generosity and patience have helped strengthen the academic foundation of many."
+  },
+  {
+    "id": "merit-5",
+    "number": 5,
+    "category": "Merit Certification",
+    "name": "Nnamani Samuel Chinecherem",
+    "role": "Tutor",
+    "slug": "nnamani-samuel-chinecherem",
+    "description": "Presented to Nnamani Samuel Chinecherem in recognition of your dedicated academic service and meritorious contribution as a Tutor. Your patience and commitment to helping others excel academically is truly commendable."
+  },
+  {
+    "id": "merit-6",
+    "number": 6,
+    "category": "Merit Certification",
+    "name": "Muhammad Fawas",
+    "role": "FYB",
+    "slug": "muhammad-fawas",
+    "description": "Presented to Muhammad Fawas in recognition of your valuable contributions and dedicated service to the Final Year Brethren activities. Your commitment, ideas and support towards the success of our final year are highly appreciated."
+  },
+  {
+    "id": "merit-7",
+    "number": 7,
+    "category": "Merit Certification",
+    "name": "Abubakar Usama",
+    "role": "Academic",
+    "slug": "abubakar-usama",
+    "description": "Presented to Abubakar Usama in recognition of your outstanding academic excellence and meritorious intellectual contributions to the class. Your brilliance, diligence and willingness to inspire others academically remain exemplary and highly commendable."
+  },
+  {
+    "id": "merit-8",
+    "number": 8,
+    "category": "Merit Certification",
+    "name": "Bello Abdulmalik",
+    "role": "Service",
+    "slug": "bello-abdulmalik",
+    "description": "Presented to Bello Abdulmalik in recognition of your exceptional dedication and selfless service to the class. Your consistent support, reliability and willingness to serve whenever called upon are truly commendable and deeply valued."
+  },
+  {
+    "id": "merit-9",
+    "number": 9,
+    "category": "Merit Certification",
+    "name": "Ogbumba Lauretta Chinwendu",
+    "role": "Tutorial",
+    "slug": "ogbumba-lauretta-chinwendu",
+    "description": "Presented to Ogbumba Lauretta Chinwendu in recognition of your outstanding academic support and selfless service through tutorials. Your dedication to the academic upliftment of your peers is exemplary and inspiring."
+  },
+  {
+    "id": "merit-10",
+    "number": 10,
+    "category": "Merit Certification",
+    "name": "Elaigwu Genevieve Ochanya",
+    "role": "Female Class Rep Jan 2020 to Sept 2022",
+    "slug": "elaigwu-genevieve-ochanya",
+    "description": "Presented to Elaigwu Genevieve Ochanya in recognition of your pioneering leadership and meritorious service as Female Class Representative, Jan. 2020 to Sept. 2022. You served with grace, courage and dedication, representing the female folk with dignity and laying a strong foundation for unity and progress."
+  },
+  {
+    "id": "merit-11",
+    "number": 11,
+    "category": "Merit Certification",
+    "name": "Salawudeen Abdulsamad",
+    "role": "Service",
+    "slug": "salawudeen-abdulsamad",
+    "description": "Presented to Salawudeen Abdulsamad in recognition of your dedicated and selfless service to the class. Your consistent contributions, supportive spirit and commitment to the welfare of the class are deeply valued and commendable."
+  },
+  {
+    "id": "merit-12",
+    "number": 12,
+    "category": "Merit Certification",
+    "name": "Ramatu Sanusi",
+    "role": "FYB",
+    "slug": "ramatu-sanusi",
+    "description": "Presented to Ramatu Sanusi in recognition of your outstanding contributions and dedicated service to the Final Year Brethren Committee. Your creativity, elegance and commitment added great value to our final year celebrations and will be fondly remembered."
+  }
+]

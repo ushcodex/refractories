@@ -19,7 +19,7 @@ This file records the approved design decisions. It contains no secrets and no r
 - Validation happens on the server. The answer is never shipped to the browser.
 - A correct answer issues a signed HttpOnly session cookie.
 - Attempts are rate-limited.
-- Turnstile is enabled.
+- No CAPTCHA is used.
 
 ## Roster and validation
 
@@ -108,7 +108,6 @@ This file records the approved design decisions. It contains no secrets and no r
 
 ## Open setup items
 
-- Turnstile site key and secret key.
 - Admin password for the preview environment.
 - Roster pepper for registration-number hashing.
 - Final approval before creating preview resources.

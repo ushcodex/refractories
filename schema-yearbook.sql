@@ -137,5 +137,5 @@ INSERT OR IGNORE INTO yearbook_settings (key, value) VALUES
   ('superlatives_enabled', '0'),
   ('results_published', '0'),
   ('auto_publish', '0'),
-  ('turnstile_enabled', '1'),
+  ('turnstile_enabled', '0'),
   ('site_name', 'u19ce');

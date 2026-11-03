@@ -193,10 +193,6 @@ export async function checkRateLimit(env, request, action, limit, windowSeconds)
   return Number(row?.count || 0) <= limit;
 }
 
-export async function verifyTurnstile(env, token, request) {
-  return true;
-}
-
 export async function getSettings(env) {
   const db = yearbookDb(env);
   const { results } = await db.prepare('SELECT key, value FROM yearbook_settings').all();
