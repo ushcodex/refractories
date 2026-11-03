@@ -1,0 +1,413 @@
+/* ═══════════════════════════════════════════════════════════════
+   Certificates & Verification Portal — Design System
+   U19 Chemical Engineering, ABU Zaria — Class of 2024
+   ═══════════════════════════════════════════════════════════════ */
+
+.cert-hero {
+  text-align: center;
+  padding: 40px 16px 24px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.cert-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: rgba(232, 168, 56, 0.12);
+  border: 1px solid rgba(232, 168, 56, 0.3);
+  border-radius: var(--radius-full);
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.cert-badge.verified {
+  background: rgba(74, 222, 128, 0.12);
+  border-color: rgba(74, 222, 128, 0.3);
+  color: #4ade80;
+}
+
+.cert-title {
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+
+.cert-subtitle {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+/* Controls: Search & Tabs */
+.cert-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 32px 0 24px;
+}
+
+@media (min-width: 768px) {
+  .cert-controls {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.cert-tabs {
+  display: flex;
+  gap: 8px;
+  background: var(--bg-secondary);
+  padding: 4px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border);
+  overflow-x: auto;
+}
+
+.cert-tab {
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--duration-fast);
+}
+
+.cert-tab:hover {
+  color: var(--text-primary);
+}
+
+.cert-tab.active {
+  background: var(--accent-gradient);
+  color: #07070c;
+  font-weight: 600;
+}
+
+.cert-search-box {
+  position: relative;
+  min-width: 260px;
+}
+
+.cert-search-input {
+  width: 100%;
+  padding: 10px 14px 10px 38px;
+  background: var(--bg-input);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color var(--duration-fast);
+}
+
+.cert-search-input:focus {
+  border-color: var(--accent);
+}
+
+.cert-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-tertiary);
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+}
+
+/* Certificate Cards Grid */
+.cert-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+  margin-bottom: 48px;
+}
+
+.cert-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--duration-normal), border-color var(--duration-normal), box-shadow var(--duration-normal);
+  text-decoration: none;
+  color: inherit;
+}
+
+.cert-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(232, 168, 56, 0.4);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(232, 168, 56, 0.1);
+}
+
+.cert-thumb-wrap {
+  position: relative;
+  aspect-ratio: 1.425;
+  background: #000;
+  overflow: hidden;
+}
+
+.cert-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--duration-slow);
+}
+
+.cert-card:hover .cert-thumb-img {
+  transform: scale(1.03);
+}
+
+.cert-card-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.cert-card-category {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  align-self: flex-start;
+}
+
+.category-fyb {
+  background: rgba(21, 107, 96, 0.2);
+  color: #38bdf8;
+  border: 1px solid rgba(21, 107, 96, 0.4);
+}
+
+.category-merit {
+  background: rgba(232, 168, 56, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(232, 168, 56, 0.3);
+}
+
+.cert-card-name {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.cert-card-role {
+  font-size: 0.9rem;
+  color: var(--accent);
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.cert-card-desc {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 16px;
+  flex-grow: 1;
+}
+
+.cert-card-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.cert-card-actions .btn {
+  flex: 1;
+  text-align: center;
+  justify-content: center;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+}
+
+/* Individual Certificate Page Layout */
+.cert-detail-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  margin: 24px 0 60px;
+}
+
+@media (min-width: 992px) {
+  .cert-detail-layout {
+    grid-template-columns: 1.4fr 1fr;
+    align-items: start;
+  }
+}
+
+.cert-viewer-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: 20px;
+  position: sticky;
+  top: 90px;
+}
+
+.cert-frame {
+  position: relative;
+  background: #000;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(232, 168, 56, 0.15);
+  border: 2px solid rgba(232, 168, 56, 0.3);
+}
+
+.cert-frame img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.cert-viewer-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+.cert-info-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.cert-verification-seal {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: rgba(74, 222, 128, 0.08);
+  border: 1px solid rgba(74, 222, 128, 0.25);
+  border-radius: var(--radius-lg);
+}
+
+.seal-icon {
+  width: 36px;
+  height: 36px;
+  color: #4ade80;
+  flex-shrink: 0;
+}
+
+.seal-text strong {
+  display: block;
+  color: #4ade80;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.seal-text span {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+.cert-citation-box {
+  background: var(--bg-card);
+  border-left: 3px solid var(--accent);
+  padding: 16px 20px;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+
+.cert-citation-box p {
+  font-family: var(--font-body);
+  font-size: 0.98rem;
+  line-height: 1.65;
+  color: var(--text-primary);
+  font-style: italic;
+}
+
+.cert-meta-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  padding: 16px 0;
+  border-top: 1px solid var(--glass-border);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.cert-meta-item label {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-tertiary);
+  margin-bottom: 4px;
+}
+
+.cert-meta-item span {
+  display: block;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.cert-qr-section {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: var(--bg-tertiary);
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border);
+}
+
+.cert-qr-section img {
+  width: 90px;
+  height: 90px;
+  background: #fff;
+  padding: 4px;
+  border-radius: 6px;
+}
+
+.cert-qr-text {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.cert-share-link {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.cert-share-input {
+  flex: 1;
+  background: var(--bg-input);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  outline: none;
+}
+
