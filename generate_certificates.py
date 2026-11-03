@@ -172,6 +172,17 @@ def generate():
 
         doc.close()
 
+    # Combined collection, in certificate order.
+    combined = fitz.open()
+    for cert in certs:
+        source = fitz.open(f"public/certificates/pdf/{cert['slug']}.pdf")
+        combined.insert_pdf(source)
+        source.close()
+    combined_path = "public/certificates/pdf/all-certificates-2024.pdf"
+    combined.save(combined_path, deflate=True, garbage=4, clean=True)
+    combined.close()
+    print(f"Combined: {os.path.getsize(combined_path) // 1024} KB -> {combined_path}")
+
     print(f"\nDone - {len(certs)} certificates generated.")
 
 
