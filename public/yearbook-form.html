@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#07070c">
+  <meta name="robots" content="noindex">
+  <title>Yearbook Profile — u19ce</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/yearbook.css">
+
+</head>
+<body>
+  <nav class="nav" role="navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">
+        <span class="brand-icon">🔥</span>
+        <span>
+          The Refractories
+          <span class="brand-sub">Class of 2024</span>
+        </span>
+      </a>
+      <div class="nav-links">
+        <a href="/" class="nav-link">Gallery</a>
+        <a href="/yearbook.html" class="nav-link active">Yearbook</a>
+        <a href="/superlatives.html" class="nav-link">Superlatives</a>
+        <a href="/upload.html" class="nav-link">Upload</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="yb-shell yb-page">
+      <header class="yb-hero">
+        <p class="yb-eyebrow" id="page-eyebrow">Class of 2024</p>
+        <h1 class="yb-title" id="page-title">Your yearbook profile.</h1>
+        <p class="yb-subtitle" id="page-subtitle">
+          A few details, a few memories, and the photos that feel like you.
+          Your profile will appear in the yearbook after review.
+        </p>
+        <p class="text-secondary" style="font-size:0.82rem;margin-top:14px;" id="deadline-line"></p>
+        <p class="text-secondary" style="font-size:0.78rem;margin-top:8px;min-height:1.2em;" id="draft-status"></p>
+      </header>
+
+      <div class="yb-note" id="locked-note" style="display:none;margin-bottom:18px;">
+        <strong>The form is closed.</strong> You can still view the yearbook and superlatives.
+      </div>
+
+      <div class="yb-progress" id="progress" aria-hidden="true">
+        <span class="active"></span><span></span><span></span><span></span><span></span>
+      </div>
+
+      <!-- Step 0: Identity -->
+      <section class="yb-panel yb-step active" id="step-identity" data-step="0">
+        <div class="yb-section-head">
+          <div>
+            <h2>First, find your name.</h2>
+            <p>Select your name from the class list, then enter your registration number. This keeps the yearbook private to our class.</p>
+          </div>
+        </div>
+
+        <div class="yb-grid">
+          <div class="yb-field full">
+            <label for="roster-search">Search your name</label>
+            <input id="roster-search" type="search" placeholder="Start typing your name..." autocomplete="off">
+          </div>
+          <div class="yb-field full" data-field="roster_id">
+            <label for="roster-select">Your name <span class="required">*</span></label>
+            <select id="roster-select" required>
+              <option value="">Select your name</option>
+            </select>
+            <p class="hint">Only U19CE, U19PL, and U21CE names are listed.</p>
+            <p class="error" data-error="roster_id"></p>
+          </div>
+          <div class="yb-field full" data-field="reg_number">
+            <label for="reg-number">Registration number <span class="required">*</span></label>
+            <input id="reg-number" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="e.g. U19CE1234">
+            <p class="hint">Your registration number is only used to confirm your identity. It is not shown anywhere.</p>
+            <p class="error" data-error="reg_number"></p>
+          </div>
+        </div>
+
+        <p class="error" id="identity-error" role="alert" style="margin-top:10px;"></p>
+
+        <div class="yb-actions">
+          <div class="right">
+            <button class="btn btn-primary" id="verify-btn" type="button">Verify and continue</button>
+          </div>
+        </div>
+
+        <div style="margin-top:22px;padding-top:18px;border-top:1px solid var(--border);">
+          <button class="btn btn-sm btn-secondary" id="not-listed-toggle" type="button">I'm not on the list</button>
+          <div id="not-listed-box" style="display:none;margin-top:14px;">
+            <div class="yb-grid">
+              <div class="yb-field">
+                <label for="not-listed-name">Your name</label>
+                <input id="not-listed-name" type="text" maxlength="100" placeholder="Full name">
+              </div>
+              <div class="yb-field">
+                <label for="not-listed-contact">Contact (optional)</label>
+                <input id="not-listed-contact" type="text" maxlength="100" placeholder="Phone or email">
+              </div>
+              <div class="yb-field full">
+                <label for="not-listed-note">What should we know?</label>
+                <textarea id="not-listed-note" maxlength="500" placeholder="Tell us your class or set."></textarea>
+              </div>
+            </div>
+            <p class="error" id="not-listed-error" role="alert" style="margin-top:8px;"></p>
+            <button class="btn btn-sm btn-secondary" id="not-listed-submit" type="button" style="margin-top:10px;">Send request</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 1: About you -->
+      <section class="yb-panel yb-step" id="step-about" data-step="1">
+        <div class="yb-section-head">
+          <div>
+            <h2>About you.</h2>
+            <p>The small details that make your page feel like you.</p>
+          </div>
+        </div>
+
+        <div class="yb-grid">
+          <div class="yb-field" data-field="display_name">
+            <label for="display-name">Preferred name <span class="required">*</span></label>
+            <input id="display-name" type="text" maxlength="60" placeholder="How should we call you?">
+            <p class="error" data-error="display_name"></p>
+          </div>
+          <div class="yb-field" data-field="nickname">
+            <label for="nickname">Nickname <span class="required">*</span></label>
+            <input id="nickname" type="text" maxlength="25" placeholder="The name your friends use">
+            <p class="error" data-error="nickname"></p>
+          </div>
+          <div class="yb-field" data-field="birth_day">
+            <label for="birth-day">Birth day <span class="required">*</span></label>
+            <select id="birth-day"></select>
+            <p class="error" data-error="birth_day"></p>
+          </div>
+          <div class="yb-field" data-field="birth_month">
+            <label for="birth-month">Birth month <span class="required">*</span></label>
+            <select id="birth-month"></select>
+            <p class="error" data-error="birth_month"></p>
+          </div>
+          <div class="yb-field" data-field="state_of_origin">
+            <label for="state-of-origin">State of origin <span class="required">*</span></label>
+            <select id="state-of-origin"></select>
+            <p class="error" data-error="state_of_origin"></p>
+          </div>
+          <div class="yb-field" data-field="hometown">
+            <label for="hometown">Hometown (optional)</label>
+            <input id="hometown" type="text" maxlength="40" placeholder="Town or city">
+          </div>
+          <div class="yb-field" data-field="whatsapp">
+            <label for="whatsapp">WhatsApp number (optional)</label>
+            <input id="whatsapp" type="tel" maxlength="30" placeholder="+234 ...">
+            <p class="hint">Only used for class coordination. It is never shown on your public profile.</p>
+            <p class="error" data-error="whatsapp"></p>
+          </div>
+          <div class="yb-field">
+            <label>Privacy</label>
+            <label class="yb-toggle">
+              <input id="show-birthday" type="checkbox">
+              <span>Show my birthday on my profile</span>
+            </label>
+            <label class="yb-toggle">
+              <input id="include-phone" type="checkbox">
+              <span>Include my phone number in the private class contact list</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="yb-actions">
+          <button class="btn btn-secondary" type="button" data-back="0">Back</button>
+          <div class="right">
+            <button class="btn btn-primary" type="button" data-next="2">Continue</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 2: Personality -->
+      <section class="yb-panel yb-step" id="step-personality" data-step="2">
+        <div class="yb-section-head">
+          <div>
+            <h2>Outside the classroom.</h2>
+            <p>What are you into when you are not chasing deadlines?</p>
+          </div>
+        </div>
+
+        <div class="yb-grid">
+          <div class="yb-field full" data-field="outside_tags">
+            <label>Three things you are into outside class <span class="required">*</span></label>
+            <div class="yb-grid three">
+              <input id="outside-tag-1" type="text" maxlength="40" placeholder="e.g. Photography">
+              <input id="outside-tag-2" type="text" maxlength="40" placeholder="e.g. Football">
+              <input id="outside-tag-3" type="text" maxlength="40" placeholder="e.g. Music">
+            </div>
+            <p class="error" data-error="outside_tags"></p>
+          </div>
+          <div class="yb-field full" data-field="outside_line">
+            <label for="outside-line">One line about you outside class <span class="required">*</span></label>
+            <input id="outside-line" type="text" maxlength="120" placeholder="The thing people should know about you">
+            <p class="error" data-error="outside_line"></p>
+          </div>
+          <div class="yb-field full" data-field="unknown_fact">
+            <label for="unknown-fact">One thing people may not know about you <span class="required">*</span></label>
+            <textarea id="unknown-fact" maxlength="200" placeholder="A fun fact, a hidden talent, a plot twist..."></textarea>
+            <p class="error" data-error="unknown_fact"></p>
+          </div>
+          <div class="yb-field full" data-field="hobbies">
+            <label>Three hobbies <span class="required">*</span></label>
+            <div class="yb-grid three">
+              <input id="hobby-1" type="text" maxlength="40" placeholder="e.g. Reading">
+              <input id="hobby-2" type="text" maxlength="40" placeholder="e.g. Cooking">
+              <input id="hobby-3" type="text" maxlength="40" placeholder="e.g. Gaming">
+            </div>
+            <p class="error" data-error="hobbies"></p>
+          </div>
+          <div class="yb-field" data-field="direction">
+            <label for="direction">Your direction (optional)</label>
+            <input id="direction" type="text" maxlength="40" placeholder="e.g. Process engineering">
+          </div>
+          <div class="yb-field" data-field="direction_line">
+            <label for="direction-line">One line about your direction (optional)</label>
+            <input id="direction-line" type="text" maxlength="150" placeholder="Where are you headed?">
+          </div>
+        </div>
+
+        <div class="yb-actions">
+          <button class="btn btn-secondary" type="button" data-back="1">Back</button>
+          <div class="right">
+            <button class="btn btn-primary" type="button" data-next="3">Continue</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 3: Academics & memories -->
+      <section class="yb-panel yb-step" id="step-academics" data-step="3">
+        <div class="yb-section-head">
+          <div>
+            <h2>Class, courses, and memories.</h2>
+            <p>The academic bits and the moments worth keeping.</p>
+          </div>
+        </div>
+
+        <div class="yb-grid">
+          <div class="yb-field" data-field="favourite_course">
+            <label for="favourite-course">Favourite course <span class="required">*</span></label>
+            <select id="favourite-course"></select>
+            <p class="error" data-error="favourite_course"></p>
+          </div>
+          <div class="yb-field" data-field="toughest_course">
+            <label for="toughest-course">Toughest course <span class="required">*</span></label>
+            <select id="toughest-course"></select>
+            <p class="error" data-error="toughest_course"></p>
+          </div>
+          <div class="yb-field" data-field="hardest_level">
+            <label for="hardest-level">Hardest level <span class="required">*</span></label>
+            <select id="hardest-level"></select>
+            <p class="error" data-error="hardest_level"></p>
+          </div>
+          <div class="yb-field" data-field="favourite_lecturer">
+            <label for="favourite-lecturer">Favourite lecturer <span class="required">*</span></label>
+            <select id="favourite-lecturer"></select>
+            <p class="error" data-error="favourite_lecturer"></p>
+          </div>
+          <div class="yb-field" data-field="most_teaching_lecturer">
+            <label for="most-teaching-lecturer">Lecturer who taught you the most (optional)</label>
+            <select id="most-teaching-lecturer"></select>
+            <p class="error" data-error="most_teaching_lecturer"></p>
+          </div>
+          <div class="yb-field full" data-field="memorable_moment">
+            <label for="memorable-moment">One memorable class moment (optional)</label>
+            <textarea id="memorable-moment" maxlength="250" placeholder="A moment that still makes you laugh or smile."></textarea>
+          </div>
+          <div class="yb-field" data-field="class_word">
+            <label for="class-word">One word for the class <span class="required">*</span></label>
+            <input id="class-word" type="text" maxlength="20" placeholder="e.g. Unforgettable">
+            <p class="error" data-error="class_word"></p>
+          </div>
+          <div class="yb-field" data-field="motto">
+            <label for="motto">Your motto <span class="required">*</span></label>
+            <input id="motto" type="text" maxlength="150" placeholder="A line you live by">
+            <p class="error" data-error="motto"></p>
+          </div>
+          <div class="yb-field" data-field="social_platform">
+            <label for="social-platform">Social platform (optional)</label>
+            <select id="social-platform">
+              <option value="">Prefer not to say</option>
+              <option value="Instagram">Instagram</option>
+              <option value="X">X</option>
+              <option value="LinkedIn">LinkedIn</option>
+              <option value="TikTok">TikTok</option>
+              <option value="Facebook">Facebook</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="yb-field" data-field="social_handle">
+            <label for="social-handle">Social handle (optional)</label>
+            <input id="social-handle" type="text" maxlength="60" placeholder="@yourhandle">
+          </div>
+          <div class="yb-field full" data-field="class_message">
+            <label for="class-message">A short message to the class (optional)</label>
+            <textarea id="class-message" maxlength="300" placeholder="Something you want to say to everyone."></textarea>
+          </div>
+          <div class="yb-field" data-field="relationship_status">
+            <label for="relationship-status">Relationship status (optional)</label>
+            <select id="relationship-status">
+              <option value="">Prefer not to say</option>
+              <option value="Single">Single</option>
+              <option value="In a relationship">In a relationship</option>
+              <option value="It's complicated">It's complicated</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="yb-actions">
+          <button class="btn btn-secondary" type="button" data-back="2">Back</button>
+          <div class="right">
+            <button class="btn btn-primary" type="button" data-next="4">Continue</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 4: Photos & consent -->
+      <section class="yb-panel yb-step" id="step-photos" data-step="4">
+        <div class="yb-section-head">
+          <div>
+            <h2>Photos and permission.</h2>
+            <p>One clear portrait, one candid, and optionally a department or group photo.</p>
+          </div>
+        </div>
+
+        <div class="yb-photo-grid">
+          <div class="yb-photo-box" data-photo="portrait">
+            <input id="portrait-input" type="file" accept="image/*">
+            <img id="portrait-preview" alt="" style="display:none;">
+            <div class="placeholder" id="portrait-placeholder">
+              <strong>Portrait</strong>
+              <span>A clear photo of your face</span>
+            </div>
+          </div>
+          <div class="yb-photo-box" data-photo="candid">
+            <input id="candid-input" type="file" accept="image/*">
+            <img id="candid-preview" alt="" style="display:none;">
+            <div class="placeholder" id="candid-placeholder">
+              <strong>Candid</strong>
+              <span>A photo that feels like you</span>
+            </div>
+          </div>
+          <div class="yb-photo-box" data-photo="department">
+            <input id="department-input" type="file" accept="image/*">
+            <img id="department-preview" alt="" style="display:none;">
+            <div class="placeholder" id="department-placeholder">
+              <strong>Department photo</strong>
+              <span>Optional group or department photo</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="yb-grid" style="margin-top:18px;">
+          <div class="yb-field full">
+            <label class="yb-toggle">
+              <input id="consent-accurate" type="checkbox">
+              <span>I confirm that the information and photos I am submitting are accurate and mine to share.</span>
+            </label>
+            <p class="error" data-error="consent_accurate"></p>
+          </div>
+          <div class="yb-field full">
+            <label class="yb-toggle">
+              <input id="show-in-yearbook" type="checkbox" checked>
+              <span>Show my profile in the public yearbook after it is reviewed.</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="yb-note" style="margin-top:16px;">
+          <strong>Privacy:</strong> your registration number is never shown. Your phone number is never shown on your public profile. You can edit or remove your profile later with your private edit link.
+        </div>
+
+        <p class="error" id="submit-error" role="alert" style="margin-top:10px;"></p>
+
+        <div class="yb-actions">
+          <button class="btn btn-secondary" type="button" data-back="3">Back</button>
+          <div class="right">
+            <button class="btn btn-primary" id="submit-profile-btn" type="button">Submit profile</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 5: Success -->
+      <section class="yb-panel yb-step" id="step-success" data-step="5">
+        <div class="yb-section-head">
+          <div>
+            <h2 id="success-title">Your profile is in.</h2>
+            <p id="success-message">It will appear in the yearbook after review.</p>
+          </div>
+        </div>
+        <div class="yb-edit-link" id="edit-link-box" style="display:none;">
+          <strong>Keep this private edit link.</strong>
+          <p class="text-secondary" style="font-size:0.84rem;margin:0;">Use it to edit your profile later. Do not share it.</p>
+          <code id="edit-link-value"></code>
+          <button class="btn btn-sm btn-secondary" id="copy-edit-link" type="button">Copy link</button>
+        </div>
+        <div class="yb-actions">
+          <a class="btn btn-secondary" href="/yearbook.html">View the yearbook</a>
+          <a class="btn btn-primary" href="/">Back to the gallery</a>
+        </div>
+      </section>
+
+      <!-- Live preview -->
+      <aside class="yb-panel" id="live-preview" style="margin-top:18px;">
+        <div class="yb-section-head">
+          <div>
+            <h3>Live preview</h3>
+            <p>This is roughly how your yearbook card will look.</p>
+          </div>
+        </div>
+        <div class="yb-profile-card" style="cursor:default;">
+          <img id="preview-portrait" alt="" style="display:none;">
+          <div id="preview-portrait-empty" style="aspect-ratio:4/5;display:grid;place-items:center;background:var(--bg-tertiary);color:var(--text-secondary);font-size:0.82rem;">Your portrait</div>
+          <div class="yb-profile-card-body">
+            <h3 id="preview-name">Your name</h3>
+            <p id="preview-nickname">Your nickname</p>
+            <p id="preview-state" style="margin-top:6px;">State of origin</p>
+            <div class="yb-tag-list" id="preview-tags" style="margin-top:10px;"></div>
+            <p id="preview-word" style="margin-top:10px;color:var(--accent);">Your class word</p>
+            <p id="preview-motto" style="margin-top:6px;">Your motto</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script type="module" src="/js/yearbook.js"></script>
+</body>
+</html>

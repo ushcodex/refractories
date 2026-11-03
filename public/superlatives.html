@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#07070c">
+  <title>Superlatives — u19ce</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/yearbook.css">
+
+</head>
+<body>
+  <nav class="nav" role="navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">
+        <span class="brand-icon">🔥</span>
+        <span>
+          The Refractories
+          <span class="brand-sub">Class of 2024</span>
+        </span>
+      </a>
+      <div class="nav-links">
+        <a href="/" class="nav-link">Gallery</a>
+        <a href="/yearbook.html" class="nav-link">Yearbook</a>
+        <a href="/superlatives.html" class="nav-link active">Superlatives</a>
+        <a href="/upload.html" class="nav-link">Upload</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="yb-shell yb-page">
+      <header class="yb-hero">
+        <p class="yb-eyebrow">Class of 2024</p>
+        <h1 class="yb-title">Superlatives.</h1>
+        <p class="yb-subtitle">The fun, unserious, completely optional class superlatives.</p>
+      </header>
+
+      <div class="yb-note" style="margin-bottom:18px;">
+        These superlatives are just for fun. They are not class awards. There is no prize, no award, and no special visibility attached. Everyone is encouraged to participate.
+      </div>
+
+      <div id="superlatives-status" class="yb-panel text-center text-secondary">Loading superlatives...</div>
+
+      <section id="identity-panel" class="yb-panel" style="display:none;">
+        <div class="yb-section-head">
+          <div>
+            <h2>Confirm who you are.</h2>
+            <p>Select your name and enter your registration number. This keeps one ballot per person.</p>
+          </div>
+        </div>
+        <div class="yb-grid">
+          <div class="yb-field full">
+            <label for="roster-search">Search your name</label>
+            <input id="roster-search" type="search" placeholder="Start typing your name..." autocomplete="off">
+          </div>
+          <div class="yb-field full" data-field="roster_id">
+            <label for="roster-select">Your name <span class="required">*</span></label>
+            <select id="roster-select"></select>
+            <p class="error" data-error="roster_id"></p>
+          </div>
+          <div class="yb-field full" data-field="reg_number">
+            <label for="reg-number">Registration number <span class="required">*</span></label>
+            <input id="reg-number" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="e.g. U19CE1234">
+            <p class="error" data-error="reg_number"></p>
+          </div>
+        </div>
+        <p class="error" id="identity-error" role="alert" style="margin-top:10px;"></p>
+        <div class="yb-actions">
+          <div class="right">
+            <button class="btn btn-primary" id="verify-btn" type="button">Verify and open ballot</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="ballot-panel" class="yb-panel" style="display:none;">
+        <div class="yb-section-head">
+          <div>
+            <h2>Your ballot.</h2>
+            <p>Pick as many or as few as you like. You can come back and change your choices.</p>
+          </div>
+        </div>
+        <div class="superlative-grid" id="superlative-grid"></div>
+        <div class="yb-field full" style="margin-top:18px;">
+          <label for="award-suggestion">Have a better superlative idea? (optional)</label>
+          <input id="award-suggestion" type="text" maxlength="100" placeholder="One idea is enough">
+        </div>
+        <p class="error" id="ballot-error" role="alert" style="margin-top:10px;"></p>
+        <div class="yb-actions">
+          <div class="right">
+            <button class="btn btn-primary" id="submit-ballot-btn" type="button">Save my ballot</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="results-panel" class="yb-panel" style="display:none;">
+        <div class="yb-section-head">
+          <div>
+            <h2>Results.</h2>
+            <p>These are just for fun.</p>
+          </div>
+        </div>
+        <div id="results-grid" class="superlative-grid"></div>
+      </section>
+    </div>
+  </main>
+
+  <script type="module" src="/js/superlatives.js"></script>
+</body>
+</html>

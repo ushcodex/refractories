@@ -18,7 +18,10 @@ export async function onRequestGet({ params, env }) {
       return notFound('Image not found');
     }
 
-    const object = await env.BUCKET.get(key);
+    let object = await env.BUCKET.get(key);
+    if (!object && env.PROD_BUCKET) {
+      object = await env.PROD_BUCKET.get(key);
+    }
     if (!object) return notFound('Image not found');
 
     const headers = new Headers();

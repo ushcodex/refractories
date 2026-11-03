@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#07070c">
+  <meta name="robots" content="noindex">
+  <title>Yearbook Admin — u19ce</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/yearbook.css">
+</head>
+<body>
+  <nav class="nav" role="navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">
+        <span class="brand-icon">🔥</span>
+        <span>
+          The Refractories
+          <span class="brand-sub">Yearbook Admin</span>
+        </span>
+      </a>
+      <div class="nav-links">
+        <a href="/" class="nav-link">Gallery</a>
+        <a href="/yearbook.html" class="nav-link">Yearbook</a>
+        <a href="/admin.html" class="nav-link">Photo Admin</a>
+        <a href="/admin-yearbook.html" class="nav-link active">Yearbook Admin</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="yb-shell yb-page">
+      <header class="yb-hero">
+        <p class="yb-eyebrow">Private</p>
+        <h1 class="yb-title">Yearbook admin.</h1>
+        <p class="yb-subtitle">Review profiles, manage settings, and export the class data.</p>
+      </header>
+
+      <section id="login-panel" class="yb-panel" style="max-width:520px;margin:0 auto;">
+        <div class="yb-section-head">
+          <div>
+            <h2>Unlock</h2>
+            <p>Use the shared admin password.</p>
+          </div>
+        </div>
+        <div class="yb-field">
+          <label for="admin-code">Admin password</label>
+          <input id="admin-code" type="password" autocomplete="current-password" placeholder="Enter the admin password">
+        </div>
+        <label class="yb-toggle" style="margin-top:12px;">
+          <input id="remember-admin" type="checkbox" checked>
+          <span>Remember on this device</span>
+        </label>
+        <p class="error" id="login-error" role="alert" style="margin-top:10px;"></p>
+        <div class="yb-actions">
+          <div class="right">
+            <button class="btn btn-primary" id="unlock-btn" type="button">Unlock</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="admin-panel" style="display:none;">
+        <div class="admin-summary" id="admin-summary"></div>
+
+        <div class="yb-panel">
+          <div class="yb-section-head">
+            <div>
+              <h2>Settings</h2>
+              <p>These controls affect the public site immediately.</p>
+            </div>
+          </div>
+          <div class="admin-actions" id="settings-actions">
+            <button type="button" data-setting="form_locked" data-value="1">Lock form</button>
+            <button type="button" data-setting="form_locked" data-value="0">Unlock form</button>
+            <button type="button" data-setting="superlatives_enabled" data-value="1">Open superlatives</button>
+            <button type="button" data-setting="superlatives_enabled" data-value="0">Close superlatives</button>
+            <button type="button" data-setting="results_published" data-value="1">Publish results</button>
+            <button type="button" data-setting="results_published" data-value="0">Hide results</button>
+            <button type="button" data-setting="auto_publish" data-value="1">Auto-publish new profiles</button>
+            <button type="button" data-setting="auto_publish" data-value="0">Review before publishing</button>
+          </div>
+          <div class="yb-grid" style="margin-top:16px;">
+            <div class="yb-field">
+              <label for="class-label">Class label</label>
+              <input id="class-label" type="text" maxlength="80">
+            </div>
+            <div class="yb-field">
+              <label for="submission-deadline">Submission deadline</label>
+              <input id="submission-deadline" type="text" maxlength="80">
+            </div>
+          </div>
+          <div class="yb-actions">
+            <div class="right">
+              <button class="btn btn-secondary" id="save-settings-btn" type="button">Save text settings</button>
+              <button class="btn btn-secondary" id="export-btn" type="button">Export JSON</button>
+            </div>
+          </div>
+          <p class="error" id="settings-error" role="alert" style="margin-top:10px;"></p>
+        </div>
+
+        <div class="yb-panel">
+          <div class="yb-section-head">
+            <div>
+              <h2>Profiles</h2>
+              <p>Review, approve, reject, or remove profiles.</p>
+            </div>
+            <button class="btn btn-sm btn-secondary" id="refresh-profiles" type="button">Refresh</button>
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Class name</th>
+                  <th>Display name</th>
+                  <th>Status</th>
+                  <th>Submitted</th>
+                  <th>Flags</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="profiles-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="yb-panel">
+          <div class="yb-section-head">
+            <div>
+              <h2>Not listed requests</h2>
+              <p>People who could not find their name.</p>
+            </div>
+            <button class="btn btn-sm btn-secondary" id="refresh-requests" type="button">Refresh</button>
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Contact</th>
+                  <th>Note</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="requests-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="yb-panel">
+          <div class="yb-section-head">
+            <div>
+              <h2>Superlative results</h2>
+              <p>Counts are private until results are published.</p>
+            </div>
+            <button class="btn btn-sm btn-secondary" id="refresh-results" type="button">Refresh</button>
+          </div>
+          <div id="results-body" class="superlative-grid"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <dialog id="profile-dialog" style="width:min(760px,94vw);max-height:88vh;overflow:auto;background:var(--bg-secondary);color:var(--text);border:1px solid var(--border);border-radius:20px;padding:24px;">
+    <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;">
+      <h2 id="dialog-title" style="margin:0;">Profile</h2>
+      <button class="btn btn-sm btn-secondary" id="dialog-close" type="button">Close</button>
+    </div>
+    <div id="dialog-content" style="margin-top:18px;"></div>
+  </dialog>
+
+  <script type="module" src="/js/admin-yearbook.js"></script>
+</body>
+</html>

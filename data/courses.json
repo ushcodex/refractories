@@ -1,0 +1,494 @@
+[
+    {
+        "code":  "MATH 101",
+        "title":  "Set Theory and Number System",
+        "year_level":  1,
+        "semester":  "First"
+    },
+    {
+        "code":  "MATH 103",
+        "title":  "Geometry and Coordinate Geometry",
+        "year_level":  1,
+        "semester":  "First"
+    },
+    {
+        "code":  "MATH 105",
+        "title":  "Differential and Integral Calculus",
+        "year_level":  1,
+        "semester":  "First"
+    },
+    {
+        "code":  "PHYS 111",
+        "title":  "Mechanics",
+        "year_level":  1,
+        "semester":  "First"
+    },
+    {
+        "code":  "PHYS 131",
+        "title":  "Heat and Properties of Matter",
+        "year_level":  1,
+        "semester":  "First"
+    },
+    {
+        "code":  "PHYS 161",
+        "title":  "Physics Practical",
+        "year_level":  1,
+        "semester":  "First"
+    },
+    {
+        "code":  "CHEM 101",
+        "title":  "Introductory General Chemistry",
+        "year_level":  1,
+        "semester":  "First"
+    },
+    {
+        "code":  "CHEM 121",
+        "title":  "Introductory Organic Chemistry",
+        "year_level":  1,
+        "semester":  "First"
+    },
+    {
+        "code":  "CHEM 161",
+        "title":  "Introductory Practical Chemistry",
+        "year_level":  1,
+        "semester":  "First"
+    },
+    {
+        "code":  "GENS 101",
+        "title":  "Nationalism",
+        "year_level":  1,
+        "semester":  "First"
+    },
+    {
+        "code":  "GENS 103",
+        "title":  "English and Communication Skills",
+        "year_level":  1,
+        "semester":  "First"
+    },
+    {
+        "code":  "CHEN 102",
+        "title":  "Introduction to Chemical Engineering 1",
+        "year_level":  1,
+        "semester":  "First"
+    },
+    {
+        "code":  "MATH 102",
+        "title":  "Algebra",
+        "year_level":  1,
+        "semester":  "Second"
+    },
+    {
+        "code":  "MATH 104",
+        "title":  "Conic Section and Application of Calculus",
+        "year_level":  1,
+        "semester":  "Second"
+    },
+    {
+        "code":  "MATH 106",
+        "title":  "Vectors and Dynamics",
+        "year_level":  1,
+        "semester":  "Second"
+    },
+    {
+        "code":  "PHYS 122",
+        "title":  "Electricity, Magnetism and Modern Physics",
+        "year_level":  1,
+        "semester":  "Second"
+    },
+    {
+        "code":  "PHYS 162",
+        "title":  "Physics Practical",
+        "year_level":  1,
+        "semester":  "Second"
+    },
+    {
+        "code":  "CHEM 112",
+        "title":  "Introductory Physical Chemistry",
+        "year_level":  1,
+        "semester":  "Second"
+    },
+    {
+        "code":  "CHEM 162",
+        "title":  "Introductory Practical Chemistry",
+        "year_level":  1,
+        "semester":  "Second"
+    },
+    {
+        "code":  "CHEM 132",
+        "title":  "Introductory Organic Chemistry",
+        "year_level":  1,
+        "semester":  "Second"
+    },
+    {
+        "code":  "ENGG 102",
+        "title":  "Introduction to Engineering Profession",
+        "year_level":  1,
+        "semester":  "Second"
+    },
+    {
+        "code":  "MEEN 201",
+        "title":  "Engineering Graphics",
+        "year_level":  2,
+        "semester":  "First"
+    },
+    {
+        "code":  "MMEN 201",
+        "title":  "Material Science",
+        "year_level":  2,
+        "semester":  "First"
+    },
+    {
+        "code":  "CVEN 201",
+        "title":  "Fundamentals of Structural Analysis",
+        "year_level":  2,
+        "semester":  "First"
+    },
+    {
+        "code":  "MATH 241",
+        "title":  "Calculus 1",
+        "year_level":  2,
+        "semester":  "First"
+    },
+    {
+        "code":  "MATH 243",
+        "title":  "Methods of Linear Algebra",
+        "year_level":  2,
+        "semester":  "First"
+    },
+    {
+        "code":  "CHEM 201",
+        "title":  "General Chemistry",
+        "year_level":  2,
+        "semester":  "First"
+    },
+    {
+        "code":  "CHEM 221",
+        "title":  "Inorganic Chemistry",
+        "year_level":  2,
+        "semester":  "First"
+    },
+    {
+        "code":  "CHEM 261",
+        "title":  "Practical Chemistry",
+        "year_level":  2,
+        "semester":  "First"
+    },
+    {
+        "code":  "CHEN 202",
+        "title":  "Introduction to Management",
+        "year_level":  2,
+        "semester":  "First"
+    },
+    {
+        "code":  "CHEN 204",
+        "title":  "Introduction to Chemical Engineering 2",
+        "year_level":  2,
+        "semester":  "First"
+    },
+    {
+        "code":  "MATH 244",
+        "title":  "Methods of Linear Algebra",
+        "year_level":  2,
+        "semester":  "Second"
+    },
+    {
+        "code":  "MEEN 202",
+        "title":  "Engineering Drawing",
+        "year_level":  2,
+        "semester":  "Second"
+    },
+    {
+        "code":  "MEEN 204",
+        "title":  "Strength of Materials",
+        "year_level":  2,
+        "semester":  "Second"
+    },
+    {
+        "code":  "MEEN 206",
+        "title":  "Fundamentals of Dynamics",
+        "year_level":  2,
+        "semester":  "Second"
+    },
+    {
+        "code":  "MATH 242",
+        "title":  "Calculus 2",
+        "year_level":  2,
+        "semester":  "Second"
+    },
+    {
+        "code":  "CHEM 212",
+        "title":  "General Physical Chemistry",
+        "year_level":  2,
+        "semester":  "Second"
+    },
+    {
+        "code":  "CHEM 232",
+        "title":  "General Organic Chemistry",
+        "year_level":  2,
+        "semester":  "Second"
+    },
+    {
+        "code":  "CHEM 262",
+        "title":  "Second Year Practical Chemistry",
+        "year_level":  2,
+        "semester":  "Second"
+    },
+    {
+        "code":  "MEEN 208",
+        "title":  "Basic Thermodynamics",
+        "year_level":  2,
+        "semester":  "Second"
+    },
+    {
+        "code":  "ENGG 299",
+        "title":  "SWEP",
+        "year_level":  2,
+        "semester":  "Second"
+    },
+    {
+        "code":  "CHEN 301",
+        "title":  "PTP 1",
+        "year_level":  3,
+        "semester":  "First"
+    },
+    {
+        "code":  "CHEN 305",
+        "title":  "Chemical Reaction Engineering I",
+        "year_level":  3,
+        "semester":  "First"
+    },
+    {
+        "code":  "CHEN 307",
+        "title":  "Atomic Spectrum and Structure",
+        "year_level":  3,
+        "semester":  "First"
+    },
+    {
+        "code":  "CHEN 309",
+        "title":  "Computer Applications for Chemical Engineers",
+        "year_level":  3,
+        "semester":  "First"
+    },
+    {
+        "code":  "CHEN 341",
+        "title":  "Analytical Methods",
+        "year_level":  3,
+        "semester":  "First"
+    },
+    {
+        "code":  "MATH 341",
+        "title":  "Differential Equation and Transforms",
+        "year_level":  3,
+        "semester":  "First"
+    },
+    {
+        "code":  "GENS 301",
+        "title":  "Business Creation and Growth",
+        "year_level":  3,
+        "semester":  "First"
+    },
+    {
+        "code":  "CHEN 206",
+        "title":  "Experimental Methods and Analysis",
+        "year_level":  3,
+        "semester":  "Second"
+    },
+    {
+        "code":  "CHEN 302",
+        "title":  "PTP 2",
+        "year_level":  3,
+        "semester":  "Second"
+    },
+    {
+        "code":  "CHEN 304",
+        "title":  "Experimental Process Engineering I",
+        "year_level":  3,
+        "semester":  "Second"
+    },
+    {
+        "code":  "CHEN 306",
+        "title":  "Chemical Engineering Materials",
+        "year_level":  3,
+        "semester":  "Second"
+    },
+    {
+        "code":  "CHEN 308",
+        "title":  "Unit Operations I",
+        "year_level":  3,
+        "semester":  "Second"
+    },
+    {
+        "code":  "CHEN 310",
+        "title":  "Chemical Engineering Thermodynamics II",
+        "year_level":  3,
+        "semester":  "Second"
+    },
+    {
+        "code":  "MATH 342",
+        "title":  "Functions of Several Variables",
+        "year_level":  3,
+        "semester":  "Second"
+    },
+    {
+        "code":  "EEEN 202",
+        "title":  "Electronics and Transducers",
+        "year_level":  3,
+        "semester":  "Second"
+    },
+    {
+        "code":  "GENS 202",
+        "title":  "Entrepreneurship and Innovation",
+        "year_level":  3,
+        "semester":  "Second"
+    },
+    {
+        "code":  "CHEN 401",
+        "title":  "Unit Operations II",
+        "year_level":  4,
+        "semester":  "First"
+    },
+    {
+        "code":  "CHEN 403",
+        "title":  "Unit Operations III",
+        "year_level":  4,
+        "semester":  "First"
+    },
+    {
+        "code":  "CHEN 405",
+        "title":  "Experimental Process Engineering II",
+        "year_level":  4,
+        "semester":  "First"
+    },
+    {
+        "code":  "CHEN 407",
+        "title":  "Chemical Reaction Engineering II",
+        "year_level":  4,
+        "semester":  "First"
+    },
+    {
+        "code":  "CHEN 409",
+        "title":  "Financial Management",
+        "year_level":  4,
+        "semester":  "First"
+    },
+    {
+        "code":  "CHEN 411",
+        "title":  "Numerical Methods in Chemical Engineering",
+        "year_level":  4,
+        "semester":  "First"
+    },
+    {
+        "code":  "CHEN 413",
+        "title":  "Technical Report Writing",
+        "year_level":  4,
+        "semester":  "First"
+    },
+    {
+        "code":  "GENS 421",
+        "title":  "Law for Engineers",
+        "year_level":  4,
+        "semester":  "First"
+    },
+    {
+        "code":  "CHEN 498",
+        "title":  "SIWES - Student Industrial Work Experience Scheme",
+        "year_level":  4,
+        "semester":  "Second"
+    },
+    {
+        "code":  "CHEN 501",
+        "title":  "Chemical Reaction Engineering III",
+        "year_level":  5,
+        "semester":  "First"
+    },
+    {
+        "code":  "CHEN 503",
+        "title":  "Process Modeling, Simulation and Scale-up",
+        "year_level":  5,
+        "semester":  "First"
+    },
+    {
+        "code":  "CHEN 505",
+        "title":  "Chemical Process Technology",
+        "year_level":  5,
+        "semester":  "First"
+    },
+    {
+        "code":  "CHEN 531",
+        "title":  "Design Project I",
+        "year_level":  5,
+        "semester":  "First"
+    },
+    {
+        "code":  "CHEN 597",
+        "title":  "Research Project I",
+        "year_level":  5,
+        "semester":  "First"
+    },
+    {
+        "code":  "CHEN 507",
+        "title":  "Polymer Science and Technology",
+        "year_level":  5,
+        "semester":  "First"
+    },
+    {
+        "code":  "CHEN 509",
+        "title":  "Biochemical Engineering",
+        "year_level":  5,
+        "semester":  "First"
+    },
+    {
+        "code":  "CHEN 515",
+        "title":  "Petroleum Technology I",
+        "year_level":  5,
+        "semester":  "First"
+    },
+    {
+        "code":  "ABEN 521",
+        "title":  "Process and Storage of Agricultural Products",
+        "year_level":  5,
+        "semester":  "First"
+    },
+    {
+        "code":  "CHEN 502",
+        "title":  "Introduction to Process Dynamics and Control",
+        "year_level":  5,
+        "semester":  "Second"
+    },
+    {
+        "code":  "CHEN 504",
+        "title":  "Environmental Pollution and Control",
+        "year_level":  5,
+        "semester":  "Second"
+    },
+    {
+        "code":  "CHEN 514",
+        "title":  "Production Management and Entrepreneurship",
+        "year_level":  5,
+        "semester":  "Second"
+    },
+    {
+        "code":  "CHEN 532",
+        "title":  "Design Project II",
+        "year_level":  5,
+        "semester":  "Second"
+    },
+    {
+        "code":  "CHEN 598",
+        "title":  "Research Project II",
+        "year_level":  5,
+        "semester":  "Second"
+    },
+    {
+        "code":  "CHEN 510",
+        "title":  "Sugar Technology",
+        "year_level":  5,
+        "semester":  "Second"
+    },
+    {
+        "code":  "CHEN 516",
+        "title":  "Petroleum Technology II",
+        "year_level":  5,
+        "semester":  "Second"
+    }
+]
