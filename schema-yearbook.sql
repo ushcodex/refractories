@@ -145,7 +145,7 @@ CREATE INDEX IF NOT EXISTS idx_yearbook_rate_limits_expiry ON yearbook_rate_limi
 INSERT OR IGNORE INTO yearbook_settings (key, value) VALUES
   ('class_label', 'Class of 2024'),
   ('class_year', '2024'),
-  ('submission_deadline', '2026-11-03T23:59:00+01:00'),
+  ('submission_deadline', '2026-11-27T23:59:00+01:00'),
   ('form_locked', '0'),
   ('yearbook_published', '0'),
   ('superlatives_enabled', '1'),
