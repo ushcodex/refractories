@@ -47,6 +47,7 @@ template = """<!DOCTYPE html>
         <a href="/" class="nav-link">Gallery</a>
         <a href="/yearbook.html" class="nav-link">Yearbook</a>
         <a href="/certificates.html" class="nav-link active">Certificates</a>
+        <a href="/awards.html" class="nav-link">Awards</a>
         <a href="/superlatives.html" class="nav-link">Superlatives</a>
         <a href="/upload.html" class="nav-link">Upload</a>
       </div>

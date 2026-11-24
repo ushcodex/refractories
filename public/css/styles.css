@@ -314,19 +314,46 @@ h4 { font-size: 1.1rem; }
 
   .nav-links {
     width: 100%;
+    gap: 0;
     justify-content: space-around;
   }
 
   .nav-link {
     flex-direction: column;
     gap: 2px;
-    font-size: 0.7rem;
-    padding: var(--space-xs) var(--space-sm);
+    font-size: 0.66rem;
+    padding: 4px 4px;
   }
 
   .nav-link.active::after {
     top: -1px;
     bottom: auto;
+  }
+}
+
+/* Compact top nav for tablets */
+@media (min-width: 641px) and (max-width: 820px) {
+  .nav {
+    padding: 0 var(--space-md);
+  }
+
+  .nav-inner {
+    gap: var(--space-sm);
+  }
+
+  .nav-link {
+    gap: 4px;
+    padding: 6px 6px;
+    font-size: 0.78rem;
+  }
+
+  .nav-link svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .brand-sub {
+    display: none;
   }
 }
 

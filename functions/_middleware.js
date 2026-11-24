@@ -1,6 +1,6 @@
 import { getGateSession } from './_lib/gate.js';
 
-const PUBLIC_PREFIXES = ['/css/', '/js/', '/certificates/'];
+const PUBLIC_PREFIXES = ['/css/', '/js/', '/certificates/', '/awards/'];
 const PUBLIC_PATHS = new Set([
   '/gate',
   '/gate.html',
@@ -10,6 +10,8 @@ const PUBLIC_PATHS = new Set([
   '/robots.txt',
   '/certificates',
   '/certificates.html',
+  '/awards',
+  '/awards.html',
 ]);
 
 export async function onRequest(context) {
