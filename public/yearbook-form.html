@@ -63,15 +63,24 @@
         </div>
 
         <div class="yb-grid">
-          <div class="yb-field full">
-            <label for="roster-search">Search your name</label>
-            <input id="roster-search" type="search" placeholder="Start typing your name..." autocomplete="off">
-          </div>
           <div class="yb-field full" data-field="roster_id">
-            <label for="roster-select">Your name <span class="required">*</span></label>
-            <select id="roster-select" required>
-              <option value="">Select your name</option>
-            </select>
+            <label for="roster-search">Your name <span class="required">*</span></label>
+            <div class="yb-combobox">
+              <input
+                id="roster-search"
+                type="text"
+                placeholder="Start typing your name..."
+                autocomplete="off"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-expanded="false"
+                aria-controls="roster-options"
+                aria-haspopup="listbox"
+              >
+              <div class="yb-combobox-list" id="roster-options" role="listbox" hidden></div>
+            </div>
+            <input id="roster-select" type="hidden">
+            <p class="hint">Start typing; pick your name from the list.</p>
             <p class="error" data-error="roster_id"></p>
           </div>
           <div class="yb-field full" data-field="reg_number">
@@ -122,11 +131,6 @@
         </div>
 
         <div class="yb-grid">
-          <div class="yb-field" data-field="display_name">
-            <label for="display-name">Preferred name <span class="required">*</span></label>
-            <input id="display-name" type="text" maxlength="60" placeholder="How should we call you?">
-            <p class="error" data-error="display_name"></p>
-          </div>
           <div class="yb-field" data-field="nickname">
             <label for="nickname">Nickname <span class="required">*</span></label>
             <input id="nickname" type="text" maxlength="25" placeholder="The name your friends use">
@@ -160,11 +164,11 @@
           <div class="yb-field">
             <label>Privacy</label>
             <label class="yb-toggle">
-              <input id="show-birthday" type="checkbox">
+              <input id="show-birthday" type="checkbox" checked>
               <span>Show my birthday on my profile</span>
             </label>
             <label class="yb-toggle">
-              <input id="include-phone" type="checkbox">
+              <input id="include-phone" type="checkbox" checked>
               <span>Include my phone number in the private class contact list</span>
             </label>
           </div>
@@ -183,46 +187,50 @@
         <div class="yb-section-head">
           <div>
             <h2>Outside the classroom.</h2>
-            <p>What are you into when you are not chasing deadlines?</p>
+            <p>One hobby and one side skill or hustle. Keep it simple.</p>
           </div>
         </div>
 
         <div class="yb-grid">
-          <div class="yb-field full" data-field="outside_tags">
-            <label>Three things you are into outside class <span class="required">*</span></label>
-            <div class="yb-grid three">
-              <input id="outside-tag-1" type="text" maxlength="40" placeholder="e.g. Photography">
-              <input id="outside-tag-2" type="text" maxlength="40" placeholder="e.g. Football">
-              <input id="outside-tag-3" type="text" maxlength="40" placeholder="e.g. Music">
-            </div>
-            <p class="error" data-error="outside_tags"></p>
+          <div class="yb-field full" data-field="hobby">
+            <label for="hobby">Hobby <span class="required">*</span></label>
+            <input id="hobby" type="text" maxlength="40" placeholder="e.g. Photography, football, cooking">
+            <p class="hint">Something you enjoy doing for fun.</p>
+            <p class="error" data-error="hobby"></p>
           </div>
-          <div class="yb-field full" data-field="outside_line">
-            <label for="outside-line">One line about you outside class <span class="required">*</span></label>
-            <input id="outside-line" type="text" maxlength="120" placeholder="The thing people should know about you">
-            <p class="error" data-error="outside_line"></p>
+          <div class="yb-field full" data-field="side_skill">
+            <label for="side-skill">Side skill or hustle <span class="required">*</span></label>
+            <input id="side-skill" type="text" maxlength="80" placeholder="e.g. Freelance design, baking, coding, tutoring">
+            <p class="hint">Something you are learning, building, or doing outside class.</p>
+            <p class="error" data-error="side_skill"></p>
           </div>
-          <div class="yb-field full" data-field="unknown_fact">
-            <label for="unknown-fact">One thing people may not know about you <span class="required">*</span></label>
-            <textarea id="unknown-fact" maxlength="200" placeholder="A fun fact, a hidden talent, a plot twist..."></textarea>
-            <p class="error" data-error="unknown_fact"></p>
+          <div class="yb-field full">
+            <label>Social links <span class="optional">(optional)</span></label>
+            <p class="hint">Add only the ones you want on your profile.</p>
           </div>
-          <div class="yb-field full" data-field="hobbies">
-            <label>Three hobbies <span class="required">*</span></label>
-            <div class="yb-grid three">
-              <input id="hobby-1" type="text" maxlength="40" placeholder="e.g. Reading">
-              <input id="hobby-2" type="text" maxlength="40" placeholder="e.g. Cooking">
-              <input id="hobby-3" type="text" maxlength="40" placeholder="e.g. Gaming">
-            </div>
-            <p class="error" data-error="hobbies"></p>
+          <div class="yb-field" data-field="instagram">
+            <label for="instagram">Instagram</label>
+            <input id="instagram" type="text" maxlength="100" placeholder="@yourhandle or profile link">
           </div>
-          <div class="yb-field" data-field="direction">
-            <label for="direction">Your direction (optional)</label>
-            <input id="direction" type="text" maxlength="40" placeholder="e.g. Process engineering">
+          <div class="yb-field" data-field="x_handle">
+            <label for="x-handle">X</label>
+            <input id="x-handle" type="text" maxlength="100" placeholder="@yourhandle or profile link">
           </div>
-          <div class="yb-field" data-field="direction_line">
-            <label for="direction-line">One line about your direction (optional)</label>
-            <input id="direction-line" type="text" maxlength="150" placeholder="Where are you headed?">
+          <div class="yb-field" data-field="linkedin">
+            <label for="linkedin">LinkedIn</label>
+            <input id="linkedin" type="text" maxlength="150" placeholder="Profile link or username">
+          </div>
+          <div class="yb-field" data-field="tiktok">
+            <label for="tiktok">TikTok</label>
+            <input id="tiktok" type="text" maxlength="100" placeholder="@yourhandle or profile link">
+          </div>
+          <div class="yb-field" data-field="facebook">
+            <label for="facebook">Facebook</label>
+            <input id="facebook" type="text" maxlength="150" placeholder="Profile link or username">
+          </div>
+          <div class="yb-field full" data-field="website">
+            <label for="website">Website</label>
+            <input id="website" type="text" maxlength="200" placeholder="https://your-site.com">
           </div>
         </div>
 
@@ -282,22 +290,6 @@
             <label for="motto">Your motto <span class="required">*</span></label>
             <input id="motto" type="text" maxlength="150" placeholder="A line you live by">
             <p class="error" data-error="motto"></p>
-          </div>
-          <div class="yb-field" data-field="social_platform">
-            <label for="social-platform">Social platform (optional)</label>
-            <select id="social-platform">
-              <option value="">Prefer not to say</option>
-              <option value="Instagram">Instagram</option>
-              <option value="X">X</option>
-              <option value="LinkedIn">LinkedIn</option>
-              <option value="TikTok">TikTok</option>
-              <option value="Facebook">Facebook</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-          <div class="yb-field" data-field="social_handle">
-            <label for="social-handle">Social handle (optional)</label>
-            <input id="social-handle" type="text" maxlength="60" placeholder="@yourhandle">
           </div>
           <div class="yb-field full" data-field="class_message">
             <label for="class-message">A short message to the class (optional)</label>
@@ -407,28 +399,6 @@
           <a class="btn btn-primary" href="/">Back to the gallery</a>
         </div>
       </section>
-
-      <!-- Live preview -->
-      <aside class="yb-panel" id="live-preview" style="margin-top:18px;">
-        <div class="yb-section-head">
-          <div>
-            <h3>Live preview</h3>
-            <p>This is roughly how your yearbook card will look.</p>
-          </div>
-        </div>
-        <div class="yb-profile-card" style="cursor:default;">
-          <img id="preview-portrait" alt="" style="display:none;">
-          <div id="preview-portrait-empty" style="aspect-ratio:4/5;display:grid;place-items:center;background:var(--bg-tertiary);color:var(--text-secondary);font-size:0.82rem;">Your portrait</div>
-          <div class="yb-profile-card-body">
-            <h3 id="preview-name">Your name</h3>
-            <p id="preview-nickname">Your nickname</p>
-            <p id="preview-state" style="margin-top:6px;">State of origin</p>
-            <div class="yb-tag-list" id="preview-tags" style="margin-top:10px;"></div>
-            <p id="preview-word" style="margin-top:10px;color:var(--accent);">Your class word</p>
-            <p id="preview-motto" style="margin-top:6px;">Your motto</p>
-          </div>
-        </div>
-      </aside>
     </div>
   </main>
 

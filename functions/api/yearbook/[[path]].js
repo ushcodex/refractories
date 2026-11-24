@@ -3,10 +3,9 @@ import { badRequest, json, notFound, serverError, unauthorized } from '../../_li
 import { detectImageType, extensionForType } from '../../_lib/images.js';
 import {
   checkRateLimit,
-  cleanArray,
   cleanText,
   getSettings,
-  getSetting,
+  formatRosterName,
   hashIp,
   hashRegNumber,
   hmacHex,
@@ -74,6 +73,10 @@ function imageUrl(key) {
   return key ? `/api/yearbook/image/${key}` : '';
 }
 
+function legacySocialValue(row, platform) {
+  return row.social_platform === platform ? row.social_handle || '' : '';
+}
+
 async function insertRow(db, table, row) {
   const columns = Object.keys(row);
   const placeholders = columns.map(() => '?').join(', ');
@@ -113,9 +116,11 @@ async function getRoster(env) {
   const { results } = await db
     .prepare('SELECT id, full_name FROM yearbook_roster WHERE active = 1 ORDER BY sort_name ASC')
     .all();
-  return json({ roster: results.map((row) => ({ id: row.id, name: row.full_name })) }, 200, {
-    'cache-control': 'no-store',
-  });
+  return json(
+    { roster: results.map((row) => ({ id: row.id, name: formatRosterName(row.full_name) })) },
+    200,
+    { 'cache-control': 'no-store' }
+  );
 }
 
 async function validateIdentity(request, env) {
@@ -140,18 +145,19 @@ async function validateIdentity(request, env) {
     return json({ error: 'Invalid name or registration number.' }, 403);
   }
 
+  const displayName = formatRosterName(roster.full_name);
   const now = Math.floor(Date.now() / 1000);
   const token = await signPayload(
     {
       purpose: 'identity',
       roster_id: roster.id,
-      name: roster.full_name,
+      name: displayName,
       exp: now + 60 * 30,
     },
     env.SESSION_SECRET
   );
 
-  return json({ ok: true, token, name: roster.full_name });
+  return json({ ok: true, token, name: displayName });
 }
 
 async function getCourses(env) {
@@ -167,8 +173,17 @@ async function getCourses(env) {
 async function getLecturers(env) {
   const db = yearbookDb(env);
   const { results } = await db
-    .prepare('SELECT id, name FROM yearbook_lecturers WHERE active = 1 ORDER BY name ASC')
+    .prepare('SELECT id, name FROM yearbook_lecturers WHERE active = 1')
     .all();
+  const surname = (name) => {
+    const parts = String(name || '').trim().split(/\s+/);
+    return parts[parts.length - 1] || '';
+  };
+  results.sort(
+    (left, right) =>
+      surname(left.name).localeCompare(surname(right.name)) ||
+      String(left.name).localeCompare(String(right.name))
+  );
   return json({ lecturers: results });
 }
 
@@ -214,9 +229,6 @@ async function validateMetadata(env, metadata) {
   const db = yearbookDb(env);
   const errors = {};
 
-  const displayName = cleanText(metadata.display_name, 60);
-  if (!displayName) errors.display_name = 'Required';
-
   const nickname = cleanText(metadata.nickname, 25);
   if (!nickname) errors.nickname = 'Required';
 
@@ -239,20 +251,18 @@ async function validateMetadata(env, metadata) {
     errors.whatsapp = 'Invalid phone number';
   }
 
-  const outsideTags = cleanArray(metadata.outside_tags, 3, 40);
-  if (outsideTags.length === 0) errors.outside_tags = 'Add at least one';
+  const hobby = cleanText(metadata.hobby, 40);
+  if (!hobby) errors.hobby = 'Required';
 
-  const outsideLine = cleanText(metadata.outside_line, 120);
-  if (!outsideLine) errors.outside_line = 'Required';
+  const sideSkill = cleanText(metadata.side_skill, 80);
+  if (!sideSkill) errors.side_skill = 'Required';
 
-  const unknownFact = cleanText(metadata.unknown_fact, 200);
-  if (!unknownFact) errors.unknown_fact = 'Required';
-
-  const hobbies = cleanArray(metadata.hobbies, 3, 40);
-  if (hobbies.length === 0) errors.hobbies = 'Add at least one';
-
-  const direction = cleanText(metadata.direction, 40);
-  const directionLine = cleanText(metadata.direction_line, 150);
+  const instagram = cleanText(metadata.instagram, 100);
+  const xHandle = cleanText(metadata.x_handle, 100);
+  const linkedin = cleanText(metadata.linkedin, 150);
+  const tiktok = cleanText(metadata.tiktok, 100);
+  const facebook = cleanText(metadata.facebook, 150);
+  const website = cleanText(metadata.website, 200);
 
   const courseRows = await db
     .prepare('SELECT code FROM yearbook_courses WHERE active = 1')
@@ -269,17 +279,20 @@ async function validateMetadata(env, metadata) {
   if (!HARDEST_LEVELS.includes(hardestLevel)) errors.hardest_level = 'Choose a level';
 
   const lecturerRows = await db
-    .prepare('SELECT name FROM yearbook_lecturers WHERE active = 1')
+    .prepare('SELECT id, name FROM yearbook_lecturers WHERE active = 1')
     .all();
-  const lecturerSet = new Set(lecturerRows.results.map((row) => row.name));
+  const lecturerById = new Map(lecturerRows.results.map((row) => [row.id, row.name]));
+  const lecturerByName = new Set(lecturerRows.results.map((row) => row.name));
+  const resolveLecturer = (value) => {
+    const cleaned = cleanText(value, 100);
+    if (!cleaned) return '';
+    return lecturerById.get(cleaned) || (lecturerByName.has(cleaned) ? cleaned : '');
+  };
 
-  const favouriteLecturer = cleanText(metadata.favourite_lecturer, 100);
-  if (!lecturerSet.has(favouriteLecturer)) errors.favourite_lecturer = 'Choose a lecturer';
+  const favouriteLecturer = resolveLecturer(metadata.favourite_lecturer);
+  if (!favouriteLecturer) errors.favourite_lecturer = 'Choose a lecturer';
 
-  const mostTeachingLecturer = cleanText(metadata.most_teaching_lecturer, 100);
-  if (mostTeachingLecturer && !lecturerSet.has(mostTeachingLecturer)) {
-    errors.most_teaching_lecturer = 'Choose a lecturer';
-  }
+  const mostTeachingLecturer = resolveLecturer(metadata.most_teaching_lecturer);
 
   const memorableMoment = cleanText(metadata.memorable_moment, 250);
   const classWord = cleanText(metadata.class_word, 20);
@@ -288,8 +301,6 @@ async function validateMetadata(env, metadata) {
   const motto = cleanText(metadata.motto, 150);
   if (!motto) errors.motto = 'Required';
 
-  const socialPlatform = cleanText(metadata.social_platform, 30);
-  const socialHandle = cleanText(metadata.social_handle, 60);
   const classMessage = cleanText(metadata.class_message, 300);
   const relationshipStatus = cleanText(metadata.relationship_status, 30);
 
@@ -298,23 +309,25 @@ async function validateMetadata(env, metadata) {
 
   const showInYearbook =
     metadata.show_in_yearbook === undefined ? true : boolValue(metadata.show_in_yearbook);
-  const includePhone = boolValue(metadata.include_phone);
-  const showBirthday = boolValue(metadata.show_birthday);
+  const includePhone =
+    metadata.include_phone === undefined ? true : boolValue(metadata.include_phone);
+  const showBirthday =
+    metadata.show_birthday === undefined ? true : boolValue(metadata.show_birthday);
 
   const flags = [];
-  if (
-    outsideLine.length > 100 ||
-    unknownFact.length > 160 ||
-    memorableMoment.length > 200 ||
-    classMessage.length > 240
-  ) {
+  if (memorableMoment.length > 200 || classMessage.length > 240) {
     flags.push('long_text');
   }
   const emojiText = [
-    displayName,
     nickname,
-    outsideLine,
-    unknownFact,
+    hobby,
+    sideSkill,
+    instagram,
+    xHandle,
+    linkedin,
+    tiktok,
+    facebook,
+    website,
     memorableMoment,
     classWord,
     motto,
@@ -326,19 +339,20 @@ async function validateMetadata(env, metadata) {
     ok: Object.keys(errors).length === 0,
     errors,
     data: {
-      displayName,
       nickname,
       birthDay,
       birthMonth,
       stateOfOrigin,
       hometown,
       whatsapp,
-      outsideTags,
-      outsideLine,
-      unknownFact,
-      hobbies,
-      direction,
-      directionLine,
+      hobby,
+      sideSkill,
+      instagram,
+      xHandle,
+      linkedin,
+      tiktok,
+      facebook,
+      website,
       favouriteCourse,
       toughestCourse,
       hardestLevel,
@@ -347,8 +361,6 @@ async function validateMetadata(env, metadata) {
       memorableMoment,
       classWord,
       motto,
-      socialPlatform,
-      socialHandle,
       classMessage,
       relationshipStatus,
       consentAccurate,
@@ -439,6 +451,8 @@ async function saveProfile(request, env) {
     return json({ error: 'Please check the form.', fields: validation.errors }, 400);
   }
   const data = validation.data;
+  const displayName = formatRosterName(rosterName);
+  if (!displayName) return badRequest('Your name could not be loaded from the class list.');
 
   const profileId = existing?.id || crypto.randomUUID();
   const portraitFile = form.get('portrait');
@@ -492,7 +506,7 @@ async function saveProfile(request, env) {
   const nowIso = new Date().toISOString();
   const common = {
     status,
-    display_name: data.displayName,
+    display_name: displayName,
     nickname: data.nickname,
     birth_day: data.birthDay,
     birth_month: data.birthMonth,
@@ -500,12 +514,14 @@ async function saveProfile(request, env) {
     hometown: data.hometown,
     whatsapp: data.whatsapp,
     whatsapp_opt_in: data.includePhone ? 1 : 0,
-    outside_tags: JSON.stringify(data.outsideTags),
-    outside_line: data.outsideLine,
-    unknown_fact: data.unknownFact,
-    hobbies: JSON.stringify(data.hobbies),
-    direction: data.direction,
-    direction_line: data.directionLine,
+    hobby: data.hobby,
+    side_skill: data.sideSkill,
+    outside_tags: '[]',
+    outside_line: data.sideSkill,
+    unknown_fact: '',
+    hobbies: JSON.stringify([data.hobby]),
+    direction: '',
+    direction_line: '',
     favourite_course: data.favouriteCourse,
     toughest_course: data.toughestCourse,
     hardest_level: data.hardestLevel,
@@ -514,8 +530,14 @@ async function saveProfile(request, env) {
     memorable_moment: data.memorableMoment,
     class_word: data.classWord,
     motto: data.motto,
-    social_platform: data.socialPlatform,
-    social_handle: data.socialHandle,
+    instagram: data.instagram,
+    x_handle: data.xHandle,
+    linkedin: data.linkedin,
+    tiktok: data.tiktok,
+    facebook: data.facebook,
+    website: data.website,
+    social_platform: '',
+    social_handle: '',
     class_message: data.classMessage,
     relationship_status: data.relationshipStatus,
     portrait_key: portraitKey,
@@ -590,7 +612,7 @@ async function getEditProfile(request, env) {
     ok: true,
     profile: {
       id: row.id,
-      roster_name: roster?.full_name || '',
+      roster_name: formatRosterName(roster?.full_name || ''),
       status: row.status,
       display_name: row.display_name,
       nickname: row.nickname,
@@ -600,6 +622,18 @@ async function getEditProfile(request, env) {
       hometown: row.hometown || '',
       whatsapp: row.whatsapp || '',
       whatsapp_opt_in: row.whatsapp_opt_in === 1,
+      hobby: row.hobby || parseJsonArray(row.hobbies)[0] || '',
+      side_skill: row.side_skill || row.outside_line || '',
+      instagram: row.instagram || legacySocialValue(row, 'Instagram'),
+      x_handle: row.x_handle || legacySocialValue(row, 'X'),
+      linkedin: row.linkedin || legacySocialValue(row, 'LinkedIn'),
+      tiktok: row.tiktok || legacySocialValue(row, 'TikTok'),
+      facebook: row.facebook || legacySocialValue(row, 'Facebook'),
+      website:
+        row.website ||
+        (row.social_platform === 'Other' && /^https?:\/\//i.test(row.social_handle || '')
+          ? row.social_handle
+          : ''),
       outside_tags: parseJsonArray(row.outside_tags),
       outside_line: row.outside_line,
       unknown_fact: row.unknown_fact,
@@ -810,7 +844,7 @@ async function getAdminProfiles(env) {
   return json({
     profiles: results.map((row) => ({
       id: row.id,
-      roster_name: row.roster_name,
+      roster_name: formatRosterName(row.roster_name),
       status: row.status,
       display_name: row.display_name,
       nickname: row.nickname,
@@ -822,6 +856,18 @@ async function getAdminProfiles(env) {
       include_phone: row.include_phone === 1,
       show_in_yearbook: row.show_in_yearbook === 1,
       show_birthday: row.show_birthday === 1,
+      hobby: row.hobby || parseJsonArray(row.hobbies)[0] || '',
+      side_skill: row.side_skill || row.outside_line || '',
+      instagram: row.instagram || legacySocialValue(row, 'Instagram'),
+      x_handle: row.x_handle || legacySocialValue(row, 'X'),
+      linkedin: row.linkedin || legacySocialValue(row, 'LinkedIn'),
+      tiktok: row.tiktok || legacySocialValue(row, 'TikTok'),
+      facebook: row.facebook || legacySocialValue(row, 'Facebook'),
+      website:
+        row.website ||
+        (row.social_platform === 'Other' && /^https?:\/\//i.test(row.social_handle || '')
+          ? row.social_handle
+          : ''),
       outside_tags: parseJsonArray(row.outside_tags),
       outside_line: row.outside_line,
       unknown_fact: row.unknown_fact,

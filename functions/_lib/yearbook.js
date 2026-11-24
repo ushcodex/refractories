@@ -25,6 +25,20 @@ export function cleanArray(value, maxItems, maxLength) {
     .slice(0, maxItems);
 }
 
+export function formatRosterName(fullName) {
+  const raw = String(fullName || '').trim();
+  if (!raw) return '';
+  const parts = raw.split(',');
+  const surname = (parts.shift() || '').trim();
+  const given = parts.join(',').trim();
+  const ordered = given ? `${given} ${surname}` : surname;
+  return ordered
+    .toLowerCase()
+    .replace(/(^|[\s-])([a-z])/g, (_, prefix, letter) => `${prefix}${letter.toUpperCase()}`)
+    .replace(/\bMc([a-z])/g, (_, letter) => `Mc${letter.toUpperCase()}`)
+    .replace(/\bO'([a-z])/g, (_, letter) => `O'${letter.toUpperCase()}`);
+}
+
 export function randomToken(bytes = 32) {
   const buffer = new Uint8Array(bytes);
   crypto.getRandomValues(buffer);
@@ -223,16 +237,33 @@ export async function setSetting(env, key, value) {
 }
 
 export function publicProfile(row, bucketBase = '/api/yearbook/image') {
+  const hobbies = parseJsonArray(row.hobbies);
+  const legacyPlatform = row.social_platform || '';
+  const legacyHandle = row.social_handle || '';
+  const legacyValue = (platform) => (legacyPlatform === platform ? legacyHandle : '');
+  const socials = {
+    instagram: row.instagram || legacyValue('Instagram'),
+    x: row.x_handle || legacyValue('X'),
+    linkedin: row.linkedin || legacyValue('LinkedIn'),
+    tiktok: row.tiktok || legacyValue('TikTok'),
+    facebook: row.facebook || legacyValue('Facebook'),
+    website:
+      row.website ||
+      (legacyPlatform === 'Other' && /^https?:\/\//i.test(legacyHandle) ? legacyHandle : ''),
+  };
   const profile = {
     id: row.id,
     display_name: row.display_name,
     nickname: row.nickname,
     state_of_origin: row.state_of_origin,
     hometown: row.hometown || '',
+    hobby: row.hobby || hobbies[0] || '',
+    side_skill: row.side_skill || row.outside_line || '',
+    socials,
     outside_tags: parseJsonArray(row.outside_tags),
     outside_line: row.outside_line,
     unknown_fact: row.unknown_fact,
-    hobbies: parseJsonArray(row.hobbies),
+    hobbies,
     direction: row.direction || '',
     direction_line: row.direction_line || '',
     favourite_course: row.favourite_course,
@@ -243,8 +274,8 @@ export function publicProfile(row, bucketBase = '/api/yearbook/image') {
     memorable_moment: row.memorable_moment || '',
     class_word: row.class_word,
     motto: row.motto,
-    social_platform: row.social_platform || '',
-    social_handle: row.social_handle || '',
+    social_platform: legacyPlatform,
+    social_handle: legacyHandle,
     class_message: row.class_message || '',
     relationship_status: row.relationship_status || '',
     portrait_url: `${bucketBase}/${row.portrait_key}`,

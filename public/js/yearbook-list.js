@@ -13,6 +13,29 @@ function monthName(month) {
   return months[Number(month) - 1] || '';
 }
 
+function socialUrl(platform, value) {
+  const raw = String(value || '').trim();
+  if (!raw) return '';
+  if (/^https?:\/\//i.test(raw)) return raw;
+  const handle = raw.replace(/^@/, '');
+  switch (platform) {
+    case 'instagram':
+      return `https://instagram.com/${handle}`;
+    case 'x':
+      return `https://x.com/${handle}`;
+    case 'linkedin':
+      return `https://linkedin.com/in/${handle}`;
+    case 'tiktok':
+      return `https://tiktok.com/@${handle}`;
+    case 'facebook':
+      return `https://facebook.com/${handle}`;
+    case 'website':
+      return `https://${handle}`;
+    default:
+      return '';
+  }
+}
+
 async function request(path) {
   const response = await fetch(path, { headers: { accept: 'application/json' } });
   if (!response.ok) {
@@ -139,24 +162,46 @@ async function loadProfile(id) {
     addFact(facts, 'Hardest level', profile.hardest_level);
     addFact(facts, 'Favourite lecturer', profile.favourite_lecturer);
     addFact(facts, 'Most teaching lecturer', profile.most_teaching_lecturer);
-    addFact(facts, 'Direction', profile.direction);
+    if (profile.direction) addFact(facts, 'Direction', profile.direction);
     addFact(facts, 'Class word', profile.class_word);
     addFact(facts, 'Motto', profile.motto);
-    if (profile.social_platform && profile.social_handle) {
-      addFact(facts, 'Social', `${profile.social_platform}: ${profile.social_handle}`);
-    }
     if (profile.relationship_status) addFact(facts, 'Relationship status', profile.relationship_status);
     meta.appendChild(facts);
+
+    const socials = profile.socials || {};
+    const socialLinks = [
+      ['Instagram', socials.instagram],
+      ['X', socials.x],
+      ['LinkedIn', socials.linkedin],
+      ['TikTok', socials.tiktok],
+      ['Facebook', socials.facebook],
+      ['Website', socials.website],
+    ].filter(([, value]) => value);
+    if (socialLinks.length) {
+      const links = el('div', 'yb-social-links');
+      for (const [label, value] of socialLinks) {
+        const link = el('a', 'yb-social-link', label);
+        link.href = socialUrl(label.toLowerCase(), value);
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        links.appendChild(link);
+      }
+      meta.appendChild(links);
+    }
 
     hero.appendChild(meta);
     content.appendChild(hero);
 
-    addSection(content, 'Outside class', profile.outside_line);
-    addSection(content, 'One thing people may not know', profile.unknown_fact);
-    if (Array.isArray(profile.hobbies) && profile.hobbies.length) {
-      addSection(content, 'Hobbies', profile.hobbies.join(' · '));
+    addSection(
+      content,
+      'Hobby',
+      profile.hobby || (Array.isArray(profile.hobbies) ? profile.hobbies.join(' · ') : '')
+    );
+    addSection(content, 'Side skill / hustle', profile.side_skill || profile.outside_line);
+    if (profile.unknown_fact) {
+      addSection(content, 'One thing people may not know', profile.unknown_fact);
     }
-    addSection(content, 'Direction', profile.direction_line);
+    if (profile.direction_line) addSection(content, 'Direction', profile.direction_line);
     addSection(content, 'A memorable class moment', profile.memorable_moment);
     addSection(content, 'A message to the class', profile.class_message);
 

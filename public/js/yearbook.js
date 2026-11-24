@@ -11,6 +11,8 @@ const state = {
   identityToken: '',
   editToken: '',
   editProfile: null,
+  selectedRoster: null,
+  activeRosterIndex: -1,
   step: 0,
   files: { portrait: null, candid: null, department: null },
   objectUrls: { portrait: '', candid: '', department: '' },
@@ -67,6 +69,13 @@ function setFieldError(name, message) {
   if (error) error.textContent = message || 'Required';
 }
 
+function clearFieldError(name) {
+  const wrapper = document.querySelector(`[data-field="${name}"]`);
+  if (wrapper) wrapper.classList.remove('invalid');
+  const error = document.querySelector(`[data-error="${name}"]`);
+  if (error) error.textContent = '';
+}
+
 function showGlobalError(id, message) {
   const element = $(id);
   if (element) element.textContent = message;
@@ -112,30 +121,100 @@ function populateSelect(select, items, placeholder, labelKey = 'name', valueKey 
   }
 }
 
-function populateRoster() {
-  const select = $('roster-select');
-  select.innerHTML = '';
-  const placeholder = document.createElement('option');
-  placeholder.value = '';
-  placeholder.textContent = 'Select your name';
-  select.appendChild(placeholder);
+function normalizeRosterSearch(value) {
+  return String(value || '')
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
 
-  for (const person of state.roster) {
-    const option = document.createElement('option');
-    option.value = person.id;
+function rosterMatches(query) {
+  const normalized = normalizeRosterSearch(query);
+  const matches = normalized
+    ? state.roster.filter((person) => normalizeRosterSearch(person.name).includes(normalized))
+    : state.roster;
+  return matches.slice(0, 200);
+}
+
+function renderRosterOptions(items) {
+  const list = $('roster-options');
+  list.innerHTML = '';
+  if (!items.length) {
+    const empty = document.createElement('div');
+    empty.className = 'yb-combobox-empty';
+    empty.textContent = "No name matches. Check the spelling, or use 'I'm not on the list' below.";
+    list.appendChild(empty);
+    return;
+  }
+
+  for (const person of items) {
+    const option = document.createElement('button');
+    option.type = 'button';
+    option.className = 'yb-combobox-option';
+    option.id = `roster-option-${person.id}`;
+    option.dataset.id = person.id;
+    option.tabIndex = -1;
+    option.setAttribute('role', 'option');
+    option.setAttribute('aria-selected', 'false');
     option.textContent = person.name;
-    option.dataset.search = person.name.toLowerCase();
-    select.appendChild(option);
+    option.addEventListener('pointerdown', (event) => {
+      event.preventDefault();
+      selectRoster(person);
+    });
+    option.addEventListener('click', () => selectRoster(person));
+    list.appendChild(option);
   }
 }
 
-function filterRoster(query) {
-  const select = $('roster-select');
-  const normalized = query.trim().toLowerCase();
-  for (const option of select.options) {
-    if (!option.value) continue;
-    option.hidden = Boolean(normalized) && !option.dataset.search.includes(normalized);
-  }
+function openRosterList(query = '') {
+  const list = $('roster-options');
+  const input = $('roster-search');
+  renderRosterOptions(rosterMatches(query));
+  list.hidden = false;
+  input.setAttribute('aria-expanded', 'true');
+  state.activeRosterIndex = -1;
+  input.removeAttribute('aria-activedescendant');
+}
+
+function closeRosterList() {
+  const list = $('roster-options');
+  const input = $('roster-search');
+  if (!list || !input) return;
+  list.hidden = true;
+  input.setAttribute('aria-expanded', 'false');
+  input.removeAttribute('aria-activedescendant');
+  state.activeRosterIndex = -1;
+}
+
+function selectRoster(person) {
+  if (!person) return;
+  state.selectedRoster = person;
+  $('roster-search').value = person.name;
+  $('roster-select').value = person.id;
+  closeRosterList();
+  clearFieldError('roster_id');
+}
+
+function updateActiveRosterOption(index) {
+  const list = $('roster-options');
+  const input = $('roster-search');
+  const options = [...list.querySelectorAll('.yb-combobox-option')];
+  if (!options.length) return;
+  const next = Math.max(0, Math.min(index, options.length - 1));
+  state.activeRosterIndex = next;
+  options.forEach((option, optionIndex) => {
+    option.classList.toggle('active', optionIndex === next);
+    option.setAttribute('aria-selected', optionIndex === next ? 'true' : 'false');
+  });
+  input.setAttribute('aria-activedescendant', options[next].id);
+  options[next].scrollIntoView({ block: 'nearest' });
+}
+
+function populateRoster() {
+  state.selectedRoster = null;
+  $('roster-select').value = '';
 }
 
 function populateCourses() {
@@ -185,8 +264,8 @@ function populateCourses() {
 }
 
 function populateLecturers() {
-  populateSelect($('favourite-lecturer'), state.lecturers, 'Choose a lecturer');
-  populateSelect($('most-teaching-lecturer'), state.lecturers, 'None');
+  populateSelect($('favourite-lecturer'), state.lecturers, 'Choose a lecturer', 'name', 'name');
+  populateSelect($('most-teaching-lecturer'), state.lecturers, 'None', 'name', 'name');
 }
 
 function populateStaticSelects() {
@@ -239,7 +318,6 @@ function populateStaticSelects() {
 
 function collectMetadata() {
   return {
-    display_name: $('display-name').value.trim(),
     nickname: $('nickname').value.trim(),
     birth_day: $('birth-day').value,
     birth_month: $('birth-month').value,
@@ -248,20 +326,14 @@ function collectMetadata() {
     whatsapp: $('whatsapp').value.trim(),
     include_phone: $('include-phone').checked,
     show_birthday: $('show-birthday').checked,
-    outside_tags: [
-      $('outside-tag-1').value.trim(),
-      $('outside-tag-2').value.trim(),
-      $('outside-tag-3').value.trim(),
-    ].filter(Boolean),
-    outside_line: $('outside-line').value.trim(),
-    unknown_fact: $('unknown-fact').value.trim(),
-    hobbies: [
-      $('hobby-1').value.trim(),
-      $('hobby-2').value.trim(),
-      $('hobby-3').value.trim(),
-    ].filter(Boolean),
-    direction: $('direction').value.trim(),
-    direction_line: $('direction-line').value.trim(),
+    hobby: $('hobby').value.trim(),
+    side_skill: $('side-skill').value.trim(),
+    instagram: $('instagram').value.trim(),
+    x_handle: $('x-handle').value.trim(),
+    linkedin: $('linkedin').value.trim(),
+    tiktok: $('tiktok').value.trim(),
+    facebook: $('facebook').value.trim(),
+    website: $('website').value.trim(),
     favourite_course: $('favourite-course').value,
     toughest_course: $('toughest-course').value,
     hardest_level: $('hardest-level').value,
@@ -270,8 +342,6 @@ function collectMetadata() {
     memorable_moment: $('memorable-moment').value.trim(),
     class_word: $('class-word').value.trim(),
     motto: $('motto').value.trim(),
-    social_platform: $('social-platform').value,
-    social_handle: $('social-handle').value.trim(),
     class_message: $('class-message').value.trim(),
     relationship_status: $('relationship-status').value,
     consent_accurate: $('consent-accurate').checked,
@@ -280,28 +350,32 @@ function collectMetadata() {
   };
 }
 
+function legacySocialValue(data, platform) {
+  return data.social_platform === platform ? data.social_handle || '' : '';
+}
+
 function applyMetadata(data) {
-  $('display-name').value = data.display_name || '';
   $('nickname').value = data.nickname || '';
   $('birth-day').value = data.birth_day ? String(data.birth_day) : '';
   $('birth-month').value = data.birth_month ? String(data.birth_month) : '';
   $('state-of-origin').value = data.state_of_origin || '';
   $('hometown').value = data.hometown || '';
   $('whatsapp').value = data.whatsapp || '';
-  $('include-phone').checked = Boolean(data.include_phone);
-  $('show-birthday').checked = Boolean(data.show_birthday);
-  const tags = Array.isArray(data.outside_tags) ? data.outside_tags : [];
-  $('outside-tag-1').value = tags[0] || '';
-  $('outside-tag-2').value = tags[1] || '';
-  $('outside-tag-3').value = tags[2] || '';
-  $('outside-line').value = data.outside_line || '';
-  $('unknown-fact').value = data.unknown_fact || '';
+  $('include-phone').checked = data.include_phone === undefined ? true : Boolean(data.include_phone);
+  $('show-birthday').checked = data.show_birthday === undefined ? true : Boolean(data.show_birthday);
   const hobbies = Array.isArray(data.hobbies) ? data.hobbies : [];
-  $('hobby-1').value = hobbies[0] || '';
-  $('hobby-2').value = hobbies[1] || '';
-  $('hobby-3').value = hobbies[2] || '';
-  $('direction').value = data.direction || '';
-  $('direction-line').value = data.direction_line || '';
+  $('hobby').value = data.hobby || hobbies[0] || '';
+  $('side-skill').value = data.side_skill || data.outside_line || '';
+  $('instagram').value = data.instagram || legacySocialValue(data, 'Instagram');
+  $('x-handle').value = data.x_handle || legacySocialValue(data, 'X');
+  $('linkedin').value = data.linkedin || legacySocialValue(data, 'LinkedIn');
+  $('tiktok').value = data.tiktok || legacySocialValue(data, 'TikTok');
+  $('facebook').value = data.facebook || legacySocialValue(data, 'Facebook');
+  $('website').value =
+    data.website ||
+    (data.social_platform === 'Other' && /^https?:\/\//i.test(data.social_handle || '')
+      ? data.social_handle
+      : '');
   $('favourite-course').value = data.favourite_course || '';
   $('toughest-course').value = data.toughest_course || '';
   $('hardest-level').value = data.hardest_level || '';
@@ -310,13 +384,10 @@ function applyMetadata(data) {
   $('memorable-moment').value = data.memorable_moment || '';
   $('class-word').value = data.class_word || '';
   $('motto').value = data.motto || '';
-  $('social-platform').value = data.social_platform || '';
-  $('social-handle').value = data.social_handle || '';
   $('class-message').value = data.class_message || '';
   $('relationship-status').value = data.relationship_status || '';
   $('consent-accurate').checked = Boolean(data.consent_accurate);
   $('show-in-yearbook').checked = data.show_in_yearbook !== false;
-  updatePreview();
 }
 
 function saveDraft() {
@@ -345,55 +416,11 @@ function restoreDraft() {
   }
 }
 
-function updatePreview() {
-  const name = $('display-name').value.trim() || 'Your name';
-  const nickname = $('nickname').value.trim() || 'Your nickname';
-  const stateName = $('state-of-origin').value || 'State of origin';
-  const word = $('class-word').value.trim() || 'Your class word';
-  const motto = $('motto').value.trim() || 'Your motto';
-
-  $('preview-name').textContent = name;
-  $('preview-nickname').textContent = nickname;
-  $('preview-state').textContent = stateName;
-  $('preview-word').textContent = word;
-  $('preview-motto').textContent = motto;
-
-  const tags = [
-    $('outside-tag-1').value.trim(),
-    $('outside-tag-2').value.trim(),
-    $('outside-tag-3').value.trim(),
-  ].filter(Boolean);
-  const tagList = $('preview-tags');
-  tagList.innerHTML = '';
-  for (const tag of tags) {
-    const span = document.createElement('span');
-    span.className = 'yb-tag';
-    span.textContent = tag;
-    tagList.appendChild(span);
-  }
-
-  const portrait = state.objectUrls.portrait || state.editProfile?.portrait_url || '';
-  const preview = $('preview-portrait');
-  const empty = $('preview-portrait-empty');
-  if (portrait) {
-    preview.src = portrait;
-    preview.style.display = 'block';
-    empty.style.display = 'none';
-  } else {
-    preview.style.display = 'none';
-    empty.style.display = 'grid';
-  }
-}
-
 function validateStep(step) {
   clearFieldErrors();
   let ok = true;
 
   if (step === 1) {
-    if (!$('display-name').value.trim()) {
-      setFieldError('display_name', 'Add your preferred name.');
-      ok = false;
-    }
     if (!$('nickname').value.trim()) {
       setFieldError('nickname', 'Add a nickname.');
       ok = false;
@@ -413,20 +440,12 @@ function validateStep(step) {
   }
 
   if (step === 2) {
-    if (!$('outside-tag-1').value.trim() && !$('outside-tag-2').value.trim() && !$('outside-tag-3').value.trim()) {
-      setFieldError('outside_tags', 'Add at least one thing.');
+    if (!$('hobby').value.trim()) {
+      setFieldError('hobby', 'Add one hobby.');
       ok = false;
     }
-    if (!$('outside-line').value.trim()) {
-      setFieldError('outside_line', 'Add one line about you.');
-      ok = false;
-    }
-    if (!$('unknown-fact').value.trim()) {
-      setFieldError('unknown_fact', 'Add one thing people may not know.');
-      ok = false;
-    }
-    if (!$('hobby-1').value.trim() && !$('hobby-2').value.trim() && !$('hobby-3').value.trim()) {
-      setFieldError('hobbies', 'Add at least one hobby.');
+    if (!$('side-skill').value.trim()) {
+      setFieldError('side_skill', 'Add one side skill or hustle.');
       ok = false;
     }
   }
@@ -478,11 +497,22 @@ function validateStep(step) {
 
 async function verifyIdentity() {
   clearFieldErrors();
-  const rosterId = $('roster-select').value;
+  let rosterId = $('roster-select').value;
+  const typedName = $('roster-search').value.trim();
   const regNumber = $('reg-number').value.trim();
 
+  if (!rosterId && typedName) {
+    const exact = state.roster.find(
+      (person) => normalizeRosterSearch(person.name) === normalizeRosterSearch(typedName)
+    );
+    if (exact) {
+      selectRoster(exact);
+      rosterId = exact.id;
+    }
+  }
+
   if (!rosterId) {
-    setFieldError('roster_id', 'Select your name.');
+    setFieldError('roster_id', 'Pick your name from the list.');
     return;
   }
   if (!regNumber) {
@@ -505,7 +535,7 @@ async function verifyIdentity() {
     });
     state.identityToken = data.token;
     state.rosterName = data.name;
-    showToast(`Welcome, ${data.name.split(',')[0]}.`, 'success');
+    showToast(`Welcome, ${data.name}.`, 'success');
     setStep(1);
   } catch (error) {
     showGlobalError('identity-error', error.data?.error || error.message);
@@ -643,7 +673,6 @@ async function handlePhoto(kind, file) {
     state.objectUrls[kind] = URL.createObjectURL(compressed);
     setPhotoPreview(kind, state.objectUrls[kind]);
     state.removeDepartment = false;
-    updatePreview();
     showToast('Photo ready.', 'success');
   } catch {
     if (file.size <= 3 * 1024 * 1024) {
@@ -652,7 +681,6 @@ async function handlePhoto(kind, file) {
       state.objectUrls[kind] = URL.createObjectURL(file);
       setPhotoPreview(kind, state.objectUrls[kind]);
       state.removeDepartment = false;
-      updatePreview();
       showToast('Photo ready.', 'success');
     } else {
       showToast('This image could not be processed. Try a JPEG or PNG.', 'error');
@@ -686,7 +714,55 @@ async function loadEditProfile(token) {
 }
 
 function setupEvents() {
-  $('roster-search').addEventListener('input', (event) => filterRoster(event.target.value));
+  const rosterSearch = $('roster-search');
+  rosterSearch.addEventListener('focus', () => openRosterList(rosterSearch.value));
+  rosterSearch.addEventListener('input', (event) => {
+    const value = event.target.value;
+    if (state.selectedRoster && value !== state.selectedRoster.name) {
+      state.selectedRoster = null;
+      $('roster-select').value = '';
+    }
+    openRosterList(value);
+  });
+  rosterSearch.addEventListener('keydown', (event) => {
+    const list = $('roster-options');
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      if (list.hidden) openRosterList(rosterSearch.value);
+      const options = [...list.querySelectorAll('.yb-combobox-option')];
+      if (!options.length) return;
+      const next =
+        state.activeRosterIndex < 0
+          ? 0
+          : Math.min(state.activeRosterIndex + 1, options.length - 1);
+      updateActiveRosterOption(next);
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      if (list.hidden) openRosterList(rosterSearch.value);
+      const options = [...list.querySelectorAll('.yb-combobox-option')];
+      if (!options.length) return;
+      const next =
+        state.activeRosterIndex < 0
+          ? options.length - 1
+          : Math.max(state.activeRosterIndex - 1, 0);
+      updateActiveRosterOption(next);
+    } else if (event.key === 'Enter') {
+      if (!list.hidden) {
+        event.preventDefault();
+        const options = [...list.querySelectorAll('.yb-combobox-option')];
+        const active = options[state.activeRosterIndex] || options[0];
+        if (active) {
+          const person = state.roster.find((item) => item.id === active.dataset.id);
+          if (person) selectRoster(person);
+        }
+      }
+    } else if (event.key === 'Escape') {
+      closeRosterList();
+    }
+  });
+  rosterSearch.addEventListener('blur', () => {
+    setTimeout(closeRosterList, 120);
+  });
   $('verify-btn').addEventListener('click', verifyIdentity);
 
   $('not-listed-toggle').addEventListener('click', () => {
@@ -726,25 +802,17 @@ function setupEvents() {
   }
 
   const watched = [
-    'display-name', 'nickname', 'birth-day', 'birth-month', 'state-of-origin',
-    'hometown', 'whatsapp', 'include-phone', 'show-birthday', 'outside-tag-1',
-    'outside-tag-2', 'outside-tag-3', 'outside-line', 'unknown-fact', 'hobby-1',
-    'hobby-2', 'hobby-3', 'direction', 'direction-line', 'favourite-course',
-    'toughest-course', 'hardest-level', 'favourite-lecturer',
+    'nickname', 'birth-day', 'birth-month', 'state-of-origin', 'hometown',
+    'whatsapp', 'include-phone', 'show-birthday', 'hobby', 'side-skill',
+    'instagram', 'x-handle', 'linkedin', 'tiktok', 'facebook', 'website',
+    'favourite-course', 'toughest-course', 'hardest-level', 'favourite-lecturer',
     'most-teaching-lecturer', 'memorable-moment', 'class-word', 'motto',
-    'social-platform', 'social-handle', 'class-message', 'relationship-status',
-    'consent-accurate', 'show-in-yearbook',
+    'class-message', 'relationship-status', 'consent-accurate', 'show-in-yearbook',
   ];
   for (const id of watched) {
     const element = $(id);
-    element.addEventListener('input', () => {
-      updatePreview();
-      saveDraft();
-    });
-    element.addEventListener('change', () => {
-      updatePreview();
-      saveDraft();
-    });
+    element.addEventListener('input', saveDraft);
+    element.addEventListener('change', saveDraft);
   }
 }
 
