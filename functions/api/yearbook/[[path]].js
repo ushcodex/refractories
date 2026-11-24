@@ -13,7 +13,6 @@ import {
   publicProfile,
   randomToken,
   setSetting,
-  sha256Hex,
   signPayload,
   timingSafeEqual,
   verifyPayload,
@@ -32,22 +31,17 @@ const STATES = [
 const HARDEST_LEVELS = ['100L', '200L', '300L', '400L', '500L'];
 
 const SUPERLATIVES = [
-  'Most Likely to Become a Professor',
-  'Most Likely to Win a Nobel Prize',
-  'Most Likely to Build a Refinery',
-  'Most Likely to Win a Scholarship',
-  'Most Likely to Go Viral',
-  "Most Likely to Remember Everyone's Birthday",
-  'Most Likely to Plan the Reunion',
-  'Most Likely to Survive on Indomie',
-  'Most Likely to Ask "Is This Going to Be in the Exam?"',
-  'Most Likely to Have the Best Notes',
-  'Most Likely to Stay Calm in a Crisis',
-  'Most Likely to Be the Group Chat Admin',
-  'Most Likely to Travel the World',
-  'Most Likely to Become a Philanthropist',
-  'Most Likely to Write a Book',
-  'Most Likely to Lead a Major Project',
+  { key: 'most_likely_billionaire', label: 'Most likely to become a billionaire' },
+  { key: 'most_talkative', label: 'Most talkative' },
+  { key: 'calmest_under_pressure', label: 'Calmest under pressure' },
+  { key: 'most_likely_phd', label: 'Most likely to do a PhD' },
+  { key: 'best_presenter', label: 'Best presenter' },
+  { key: 'class_encyclopedia', label: 'Class encyclopedia' },
+  { key: 'most_likely_startup', label: 'Most likely to start a company' },
+  { key: 'class_imam', label: 'Class Imam' },
+  { key: 'class_pastor', label: 'Class Pastor' },
+  { key: 'class_politician', label: 'Class Politician' },
+  { key: 'human_rights_movement', label: 'Most likely to start a Human Rights Movement' },
 ];
 
 const MAX_YEARBOOK_FILE_SIZE = 3 * 1024 * 1024;
@@ -84,12 +78,6 @@ async function insertRow(db, table, row) {
   await db.prepare(sql).bind(...columns.map((column) => row[column])).run();
 }
 
-async function updateRow(db, table, id, row) {
-  const columns = Object.keys(row);
-  const sql = `UPDATE ${table} SET ${columns.map((column) => `${column} = ?`).join(', ')} WHERE id = ?`;
-  await db.prepare(sql).bind(...columns.map((column) => row[column]), id).run();
-}
-
 async function getConfig(env) {
   const settings = await getSettings(env);
   return json(
@@ -98,6 +86,7 @@ async function getConfig(env) {
       class_year: settings.class_year || env.CLASS_YEAR || '2024',
       submission_deadline: settings.submission_deadline || env.SUBMISSION_DEADLINE || '',
       form_locked: settings.form_locked === '1',
+      yearbook_published: settings.yearbook_published === '1',
       superlatives_enabled: settings.superlatives_enabled === '1',
       results_published: settings.results_published === '1',
       site_name: settings.site_name || env.SITE_NAME || 'u19ce',
@@ -188,6 +177,14 @@ async function getLecturers(env) {
 }
 
 async function getProfiles(env) {
+  const settings = await getSettings(env);
+  if (settings.yearbook_published !== '1') {
+    return json({
+      profiles: [],
+      coming_soon: true,
+      message: 'The yearbook is coming soon. You can still submit your profile.',
+    });
+  }
   const db = yearbookDb(env);
   const { results } = await db
     .prepare(
@@ -213,6 +210,10 @@ async function getProfiles(env) {
 async function getProfile(env, parts) {
   const id = cleanText(parts[1], 100);
   if (!id) return notFound('Profile not found');
+  const settings = await getSettings(env);
+  if (settings.yearbook_published !== '1') {
+    return json({ error: 'The yearbook is coming soon.' }, 403);
+  }
   const db = yearbookDb(env);
   const row = await db
     .prepare(
@@ -223,6 +224,42 @@ async function getProfile(env, parts) {
     .first();
   if (!row) return notFound('Profile not found');
   return json(publicProfile(row));
+}
+
+async function getMySubmission(request, env) {
+  if (!(await checkRateLimit(env, request, 'identity', 10, 900))) {
+    return json({ error: 'Too many attempts. Try again later.' }, 429);
+  }
+
+  const body = await request.json();
+  const identity = await verifyPayload(body.token, env.SESSION_SECRET);
+  if (!identity || identity.purpose !== 'identity') {
+    return json({ error: 'Verify your name and registration number first.' }, 403);
+  }
+
+  const db = yearbookDb(env);
+  const row = await db
+    .prepare('SELECT * FROM yearbook_profiles WHERE roster_id = ?')
+    .bind(identity.roster_id)
+    .first();
+  const receipt = await db
+    .prepare('SELECT 1 FROM yearbook_ballot_receipts WHERE voter_roster_id = ?')
+    .bind(identity.roster_id)
+    .first();
+
+  return json({
+    ok: true,
+    roster_id: identity.roster_id,
+    roster_name: identity.name || '',
+    profile: row
+      ? {
+          ...publicProfile(row),
+          status: row.status,
+          submitted_at: row.submitted_at,
+        }
+      : null,
+    ballot_submitted: Boolean(receipt),
+  });
 }
 
 async function validateMetadata(env, metadata) {
@@ -404,46 +441,27 @@ async function saveProfile(request, env) {
     return badRequest('Invalid profile data.');
   }
 
-  const editToken = typeof form.get('edit_token') === 'string' ? form.get('edit_token') : '';
   const identityToken = typeof form.get('identity_token') === 'string' ? form.get('identity_token') : '';
-
-  const editing = Boolean(editToken);
-  const rateAction = editing ? 'profile-edit' : 'profile-save';
-  if (!(await checkRateLimit(env, request, rateAction, 20, 3600))) {
+  if (!(await checkRateLimit(env, request, 'profile-save', 20, 3600))) {
     return json({ error: 'Too many submissions. Try again later.' }, 429);
   }
 
-  let existing = null;
-  let rosterId = '';
-  let rosterName = '';
+  const identity = await verifyPayload(identityToken, env.SESSION_SECRET);
+  if (!identity || identity.purpose !== 'identity') {
+    return json({ error: 'Verify your name and registration number first.' }, 403);
+  }
+  const rosterId = identity.roster_id;
+  const rosterName = identity.name || '';
 
-  if (editing) {
-    const tokenHash = await sha256Hex(editToken);
-    existing = await db
-      .prepare('SELECT * FROM yearbook_profiles WHERE edit_token_hash = ?')
-      .bind(tokenHash)
-      .first();
-    if (!existing) return json({ error: 'This edit link is not valid.' }, 403);
-    rosterId = existing.roster_id;
-    const roster = await db
-      .prepare('SELECT full_name FROM yearbook_roster WHERE id = ?')
-      .bind(rosterId)
-      .first();
-    rosterName = roster?.full_name || '';
-  } else {
-    const identity = await verifyPayload(identityToken, env.SESSION_SECRET);
-    if (!identity || identity.purpose !== 'identity') {
-      return json({ error: 'Verify your name and registration number first.' }, 403);
-    }
-    rosterId = identity.roster_id;
-    rosterName = identity.name;
-    existing = await db
-      .prepare('SELECT * FROM yearbook_profiles WHERE roster_id = ?')
-      .bind(rosterId)
-      .first();
-    if (existing) {
-      return json({ error: 'A profile already exists for this name. Use your edit link.' }, 409);
-    }
+  const submitted = await db
+    .prepare('SELECT 1 FROM yearbook_profiles WHERE roster_id = ?')
+    .bind(rosterId)
+    .first();
+  if (submitted) {
+    return json(
+      { error: 'You have already submitted a profile. Submissions are final.' },
+      409
+    );
   }
 
   const validation = await validateMetadata(env, metadata);
@@ -454,52 +472,26 @@ async function saveProfile(request, env) {
   const displayName = formatRosterName(rosterName);
   if (!displayName) return badRequest('Your name could not be loaded from the class list.');
 
-  const profileId = existing?.id || crypto.randomUUID();
-  const portraitFile = form.get('portrait');
-  const candidFile = form.get('candid');
-  const departmentFile = form.get('department_photo');
-  const removeDepartment = boolValue(metadata.remove_department_photo);
-
-  if (!editing && !isFile(portraitFile)) return badRequest('A portrait photo is required.');
-  if (!editing && !isFile(candidFile)) return badRequest('A candid photo is required.');
+  const profileId = crypto.randomUUID();
+  const headshotFile = form.get('headshot');
+  if (!isFile(headshotFile)) return badRequest('A professional headshot is required.');
 
   const bucket = yearbookBucket(env);
   const uploadedKeys = [];
-  let portraitKey = existing?.portrait_key || '';
-  let candidKey = existing?.candid_key || '';
-  let departmentKey = existing?.department_photo_key || null;
-  const oldKeys = [];
+  let headshotKey = '';
 
   try {
-    if (isFile(portraitFile)) {
-      const uploaded = await uploadYearbookPhoto(env, portraitFile, 'portraits', profileId);
-      uploadedKeys.push(uploaded.key);
-      if (existing?.portrait_key) oldKeys.push(existing.portrait_key);
-      portraitKey = uploaded.key;
-    }
-    if (isFile(candidFile)) {
-      const uploaded = await uploadYearbookPhoto(env, candidFile, 'candid', profileId);
-      uploadedKeys.push(uploaded.key);
-      if (existing?.candid_key) oldKeys.push(existing.candid_key);
-      candidKey = uploaded.key;
-    }
-    if (isFile(departmentFile)) {
-      const uploaded = await uploadYearbookPhoto(env, departmentFile, 'department', profileId);
-      uploadedKeys.push(uploaded.key);
-      if (existing?.department_photo_key) oldKeys.push(existing.department_photo_key);
-      departmentKey = uploaded.key;
-    } else if (removeDepartment && departmentKey) {
-      oldKeys.push(departmentKey);
-      departmentKey = null;
-    }
+    const uploaded = await uploadYearbookPhoto(env, headshotFile, 'headshots', profileId);
+    uploadedKeys.push(uploaded.key);
+    headshotKey = uploaded.key;
   } catch (error) {
     await Promise.allSettled(uploadedKeys.map((key) => bucket.delete(key)));
     return badRequest(error.message);
   }
 
-  if (!portraitKey || !candidKey) {
+  if (!headshotKey) {
     await Promise.allSettled(uploadedKeys.map((key) => bucket.delete(key)));
-    return badRequest('A portrait and candid photo are required.');
+    return badRequest('A professional headshot is required.');
   }
 
   const status = settings.auto_publish === '1' ? 'approved' : 'pending';
@@ -540,9 +532,9 @@ async function saveProfile(request, env) {
     social_handle: '',
     class_message: data.classMessage,
     relationship_status: data.relationshipStatus,
-    portrait_key: portraitKey,
-    candid_key: candidKey,
-    department_photo_key: departmentKey,
+    portrait_key: headshotKey,
+    candid_key: '',
+    department_photo_key: null,
     consent_accurate: 1,
     show_in_yearbook: data.showInYearbook ? 1 : 0,
     include_phone: data.includePhone ? 1 : 0,
@@ -555,111 +547,23 @@ async function saveProfile(request, env) {
     rejection_reason: null,
   };
 
-  let editTokenOut = '';
   try {
-    if (existing) {
-      await updateRow(db, 'yearbook_profiles', existing.id, {
-        ...common,
-        updated_at: nowIso,
-      });
-    } else {
-      editTokenOut = randomToken(32);
-      await insertRow(db, 'yearbook_profiles', {
-        id: profileId,
-        roster_id: rosterId,
-        ...common,
-        edit_token_hash: await sha256Hex(editTokenOut),
-      });
-    }
+    await insertRow(db, 'yearbook_profiles', {
+      id: profileId,
+      roster_id: rosterId,
+      ...common,
+      edit_token_hash: `disabled-${profileId}`,
+    });
   } catch (error) {
     await Promise.allSettled(uploadedKeys.map((key) => bucket.delete(key)));
     throw error;
-  }
-
-  if (oldKeys.length) {
-    await Promise.allSettled(oldKeys.map((key) => bucket.delete(key)));
   }
 
   return json({
     ok: true,
     id: profileId,
     status,
-    edit_token: editTokenOut || undefined,
-    edit_url: editTokenOut ? `/yearbook-form.html#token=${editTokenOut}` : undefined,
     roster_name: rosterName,
-  });
-}
-
-async function getEditProfile(request, env) {
-  const body = await request.json();
-  const token = typeof body.token === 'string' ? body.token : '';
-  if (!token) return badRequest('Missing edit token.');
-
-  const db = yearbookDb(env);
-  const tokenHash = await sha256Hex(token);
-  const row = await db
-    .prepare('SELECT * FROM yearbook_profiles WHERE edit_token_hash = ?')
-    .bind(tokenHash)
-    .first();
-  if (!row) return notFound('This edit link is not valid.');
-
-  const roster = await db
-    .prepare('SELECT full_name FROM yearbook_roster WHERE id = ?')
-    .bind(row.roster_id)
-    .first();
-
-  return json({
-    ok: true,
-    profile: {
-      id: row.id,
-      roster_name: formatRosterName(roster?.full_name || ''),
-      status: row.status,
-      display_name: row.display_name,
-      nickname: row.nickname,
-      birth_day: row.birth_day,
-      birth_month: row.birth_month,
-      state_of_origin: row.state_of_origin,
-      hometown: row.hometown || '',
-      whatsapp: row.whatsapp || '',
-      whatsapp_opt_in: row.whatsapp_opt_in === 1,
-      hobby: row.hobby || parseJsonArray(row.hobbies)[0] || '',
-      side_skill: row.side_skill || row.outside_line || '',
-      instagram: row.instagram || legacySocialValue(row, 'Instagram'),
-      x_handle: row.x_handle || legacySocialValue(row, 'X'),
-      linkedin: row.linkedin || legacySocialValue(row, 'LinkedIn'),
-      tiktok: row.tiktok || legacySocialValue(row, 'TikTok'),
-      facebook: row.facebook || legacySocialValue(row, 'Facebook'),
-      website:
-        row.website ||
-        (row.social_platform === 'Other' && /^https?:\/\//i.test(row.social_handle || '')
-          ? row.social_handle
-          : ''),
-      outside_tags: parseJsonArray(row.outside_tags),
-      outside_line: row.outside_line,
-      unknown_fact: row.unknown_fact,
-      hobbies: parseJsonArray(row.hobbies),
-      direction: row.direction || '',
-      direction_line: row.direction_line || '',
-      favourite_course: row.favourite_course,
-      toughest_course: row.toughest_course,
-      hardest_level: row.hardest_level,
-      favourite_lecturer: row.favourite_lecturer,
-      most_teaching_lecturer: row.most_teaching_lecturer || '',
-      memorable_moment: row.memorable_moment || '',
-      class_word: row.class_word,
-      motto: row.motto,
-      social_platform: row.social_platform || '',
-      social_handle: row.social_handle || '',
-      class_message: row.class_message || '',
-      relationship_status: row.relationship_status || '',
-      consent_accurate: row.consent_accurate === 1,
-      show_in_yearbook: row.show_in_yearbook === 1,
-      include_phone: row.include_phone === 1,
-      show_birthday: row.show_birthday === 1,
-      portrait_url: imageUrl(row.portrait_key),
-      candid_url: imageUrl(row.candid_key),
-      department_photo_url: imageUrl(row.department_photo_key),
-    },
   });
 }
 
@@ -690,38 +594,25 @@ async function addNotListed(request, env) {
 
 async function getSuperlatives(env) {
   const settings = await getSettings(env);
-  if (settings.superlatives_enabled !== '1') {
-    return json({ enabled: false, categories: [], nominees: [] });
-  }
   const db = yearbookDb(env);
   const { results } = await db
-    .prepare(
-      `SELECT id, display_name, portrait_key
-       FROM yearbook_profiles
-       WHERE status = 'approved' AND show_in_yearbook = 1
-       ORDER BY display_name ASC`
-    )
+    .prepare('SELECT id, full_name FROM yearbook_roster WHERE active = 1 ORDER BY sort_name ASC')
     .all();
-  return json({
-    enabled: true,
-    categories: SUPERLATIVES,
-    nominees: results.map((row) => ({
-      id: row.id,
-      display_name: row.display_name,
-      portrait_url: imageUrl(row.portrait_key),
-    })),
-    results_published: settings.results_published === '1',
-  });
+  return json(
+    {
+      enabled: settings.superlatives_enabled !== '0',
+      categories: SUPERLATIVES,
+      nominees: results.map((row) => ({ id: row.id, name: formatRosterName(row.full_name) })),
+      results_published: settings.results_published === '1',
+    },
+    200,
+    { 'cache-control': 'no-store' }
+  );
 }
 
 async function saveBallot(request, env) {
   if (!(await checkRateLimit(env, request, 'ballot', 20, 3600))) {
     return json({ error: 'Too many requests. Try again later.' }, 429);
-  }
-
-  const settings = await getSettings(env);
-  if (settings.superlatives_enabled !== '1') {
-    return json({ error: 'Superlatives are not open.' }, 403);
   }
 
   const body = await request.json();
@@ -730,70 +621,101 @@ async function saveBallot(request, env) {
     return json({ error: 'Verify your name and registration number first.' }, 403);
   }
 
-  const ballot = body.ballot && typeof body.ballot === 'object' ? body.ballot : {};
   const db = yearbookDb(env);
   const voterProfile = await db
-    .prepare('SELECT id FROM yearbook_profiles WHERE roster_id = ?')
+    .prepare('SELECT 1 FROM yearbook_profiles WHERE roster_id = ?')
     .bind(identity.roster_id)
     .first();
+  if (!voterProfile) {
+    return json({ error: 'Submit your yearbook profile before filling superlatives.' }, 403);
+  }
 
-  const { results: nominees } = await db
-    .prepare(
-      `SELECT id FROM yearbook_profiles
-       WHERE status = 'approved' AND show_in_yearbook = 1`
-    )
+  const receipt = await db
+    .prepare('SELECT 1 FROM yearbook_ballot_receipts WHERE voter_roster_id = ?')
+    .bind(identity.roster_id)
+    .first();
+  if (receipt) {
+    return json({ error: 'You have already submitted your superlatives ballot.' }, 409);
+  }
+
+  const { results: rosterRows } = await db
+    .prepare('SELECT id FROM yearbook_roster WHERE active = 1')
     .all();
-  const nomineeSet = new Set(nominees.map((row) => row.id));
+  const rosterIds = new Set(rosterRows.map((row) => row.id));
+  const ballot = body.ballot && typeof body.ballot === 'object' ? body.ballot : {};
+  const statements = [
+    db
+      .prepare('INSERT INTO yearbook_ballot_receipts (voter_roster_id) VALUES (?)')
+      .bind(identity.roster_id),
+  ];
+  const errors = {};
 
-  let saved = 0;
   for (const category of SUPERLATIVES) {
-    const nomineeId = cleanText(ballot[category], 100);
-    if (!nomineeId) continue;
-    if (!nomineeSet.has(nomineeId)) continue;
-    if (voterProfile && nomineeId === voterProfile.id) continue;
-
-    await db
-      .prepare(
-        `INSERT INTO yearbook_ballots (id, voter_roster_id, category, nominee_profile_id)
-         VALUES (?, ?, ?, ?)
-         ON CONFLICT(voter_roster_id, category)
-         DO UPDATE SET nominee_profile_id = excluded.nominee_profile_id, created_at = datetime('now')`
-      )
-      .bind(crypto.randomUUID(), identity.roster_id, category, nomineeId)
-      .run();
-    saved++;
+    const nomineeId = cleanText(ballot[category.key], 100);
+    if (!nomineeId) {
+      errors[category.key] = 'Choose someone.';
+      continue;
+    }
+    if (!rosterIds.has(nomineeId)) {
+      errors[category.key] = 'Choose someone from the class list.';
+      continue;
+    }
+    if (nomineeId === identity.roster_id) {
+      errors[category.key] = 'You cannot vote for yourself.';
+      continue;
+    }
+    statements.push(
+      db
+        .prepare(
+          `INSERT INTO yearbook_ballots (id, voter_roster_id, category, nominee_roster_id)
+           VALUES (?, ?, ?, ?)`
+        )
+        .bind(crypto.randomUUID(), identity.roster_id, category.key, nomineeId)
+    );
   }
 
-  const suggestion = cleanText(body.suggestion, 100);
+  const suggestion = cleanText(body.suggestion, 160);
   if (suggestion) {
-    await db
-      .prepare(
-        `INSERT INTO yearbook_award_ideas (id, voter_roster_id, suggestion)
-         VALUES (?, ?, ?)
-         ON CONFLICT(voter_roster_id)
-         DO UPDATE SET suggestion = excluded.suggestion, created_at = datetime('now')`
-      )
-      .bind(crypto.randomUUID(), identity.roster_id, suggestion)
-      .run();
+    statements.push(
+      db
+        .prepare(
+          `INSERT INTO yearbook_award_ideas (id, voter_roster_id, suggestion)
+           VALUES (?, ?, ?)
+           ON CONFLICT(voter_roster_id) DO UPDATE SET suggestion = excluded.suggestion, created_at = datetime('now')`
+        )
+        .bind(crypto.randomUUID(), identity.roster_id, suggestion)
+    );
   }
 
-  return json({ ok: true, saved });
+  if (Object.keys(errors).length) {
+    return json({ error: 'Please check your ballot.', fields: errors }, 400);
+  }
+
+  try {
+    await db.batch(statements);
+  } catch (error) {
+    if (String(error?.message || '').includes('UNIQUE')) {
+      return json({ error: 'You have already submitted your superlatives ballot.' }, 409);
+    }
+    throw error;
+  }
+
+  return json({ ok: true, submitted: true, categories: SUPERLATIVES.length });
 }
-
 async function getResults(env, publicOnly) {
-  const db = yearbookDb(env);
-  if (publicOnly) {
-    const settings = await getSettings(env);
-    if (settings.results_published !== '1') return json({ published: false, results: [] });
+  const settings = await getSettings(env);
+  if (publicOnly && settings.results_published !== '1') {
+    return json({ published: false, results: [], suggestions: [] });
   }
 
+  const db = yearbookDb(env);
   const { results } = await db
     .prepare(
-      `SELECT b.category, b.nominee_profile_id, p.display_name, COUNT(*) AS votes
+      `SELECT b.category, b.nominee_roster_id, r.full_name, COUNT(*) AS votes
        FROM yearbook_ballots b
-       JOIN yearbook_profiles p ON p.id = b.nominee_profile_id
-       GROUP BY b.category, b.nominee_profile_id
-       ORDER BY b.category ASC, votes DESC, p.display_name ASC`
+       JOIN yearbook_roster r ON r.id = b.nominee_roster_id
+       GROUP BY b.category, b.nominee_roster_id
+       ORDER BY b.category ASC, votes DESC, r.sort_name ASC`
     )
     .all();
 
@@ -801,20 +723,36 @@ async function getResults(env, publicOnly) {
   for (const row of results) {
     if (!grouped.has(row.category)) grouped.set(row.category, []);
     grouped.get(row.category).push({
-      nominee_profile_id: row.nominee_profile_id,
-      display_name: row.display_name,
+      roster_id: row.nominee_roster_id,
+      name: formatRosterName(row.full_name),
       votes: Number(row.votes),
     });
   }
 
   const output = SUPERLATIVES.map((category) => ({
-    category,
-    nominees: (grouped.get(category) || []).slice(0, publicOnly ? 3 : 50),
+    category: category.key,
+    label: category.label,
+    nominees: (grouped.get(category.key) || []).slice(0, publicOnly ? 3 : 50),
   }));
 
-  return json({ published: true, results: output });
-}
+  const ideas = await db
+    .prepare(
+      `SELECT a.suggestion, r.full_name
+       FROM yearbook_award_ideas a
+       JOIN yearbook_roster r ON r.id = a.voter_roster_id
+       WHERE a.suggestion != ''
+       ORDER BY a.created_at DESC`
+    )
+    .all();
 
+  return json({
+    published: true,
+    results: output,
+    suggestions: ideas.results
+      .map((row) => ({ name: formatRosterName(row.full_name), suggestion: row.suggestion }))
+      .slice(0, publicOnly ? 20 : 200),
+  });
+}
 async function getImage(env, parts) {
   const key = parts.slice(1).join('/');
   if (!key.startsWith('yearbook/')) return notFound('Image not found');
@@ -893,8 +831,7 @@ async function getAdminProfiles(env) {
       rejected_at: row.rejected_at,
       rejection_reason: row.rejection_reason,
       portrait_url: imageUrl(row.portrait_key),
-      candid_url: imageUrl(row.candid_key),
-      department_photo_url: imageUrl(row.department_photo_key),
+      headshot_url: imageUrl(row.portrait_key),
     })),
   });
 }
@@ -917,6 +854,7 @@ async function handleAdmin(request, env, parts, method) {
       'submission_deadline',
       'auto_publish',
       'form_locked',
+      'yearbook_published',
       'superlatives_enabled',
       'results_published',
       'site_name',
@@ -959,28 +897,21 @@ async function handleAdmin(request, env, parts, method) {
   if (method === 'DELETE' && route.startsWith('profile/')) {
     const id = cleanText(parts[2], 100);
     const row = await db
-      .prepare('SELECT portrait_key, candid_key, department_photo_key FROM yearbook_profiles WHERE id = ?')
+      .prepare('SELECT portrait_key, candid_key, department_photo_key, roster_id FROM yearbook_profiles WHERE id = ?')
       .bind(id)
       .first();
     if (!row) return notFound('Profile not found');
 
     const keys = [row.portrait_key, row.candid_key, row.department_photo_key].filter(Boolean);
     await Promise.allSettled(keys.map((key) => yearbookBucket(env).delete(key)));
-    await db.prepare('DELETE FROM yearbook_ballots WHERE nominee_profile_id = ?').bind(id).run();
+    await db
+      .prepare('DELETE FROM yearbook_ballots WHERE nominee_roster_id = ? OR voter_roster_id = ?')
+      .bind(row.roster_id, row.roster_id)
+      .run();
+    await db.prepare('DELETE FROM yearbook_ballot_receipts WHERE voter_roster_id = ?').bind(row.roster_id).run();
+    await db.prepare('DELETE FROM yearbook_award_ideas WHERE voter_roster_id = ?').bind(row.roster_id).run();
     await db.prepare('DELETE FROM yearbook_profiles WHERE id = ?').bind(id).run();
     return json({ ok: true });
-  }
-
-  if (method === 'POST' && route === 'reissue') {
-    const body = await request.json();
-    const profileId = cleanText(body.profile_id, 100);
-    if (!profileId) return badRequest('Missing profile.');
-    const token = randomToken(32);
-    await db
-      .prepare('UPDATE yearbook_profiles SET edit_token_hash = ? WHERE id = ?')
-      .bind(await sha256Hex(token), profileId)
-      .run();
-    return json({ ok: true, edit_url: `/yearbook-form.html#token=${token}` });
   }
 
   if (method === 'GET' && route === 'results') return getResults(env, false);
@@ -1047,7 +978,7 @@ export async function onRequest(context) {
     if (method === 'GET' && route === 'profiles') return await getProfiles(env);
     if (method === 'GET' && route.startsWith('profile/')) return await getProfile(env, parts);
     if (method === 'POST' && route === 'profile') return await saveProfile(request, env);
-    if (method === 'POST' && route === 'edit') return await getEditProfile(request, env);
+    if (method === 'POST' && route === 'me') return await getMySubmission(request, env);
     if (method === 'POST' && route === 'not-listed') return await addNotListed(request, env);
     if (method === 'GET' && route === 'superlatives') return await getSuperlatives(env);
     if (method === 'POST' && route === 'superlatives/vote') return await saveBallot(request, env);

@@ -279,10 +279,7 @@ export function publicProfile(row, bucketBase = '/api/yearbook/image') {
     class_message: row.class_message || '',
     relationship_status: row.relationship_status || '',
     portrait_url: `${bucketBase}/${row.portrait_key}`,
-    candid_url: `${bucketBase}/${row.candid_key}`,
-    department_photo_url: row.department_photo_key
-      ? `${bucketBase}/${row.department_photo_key}`
-      : '',
+    headshot_url: `${bucketBase}/${row.portrait_key}`,
   };
 
   if (String(row.show_birthday) === '1') {

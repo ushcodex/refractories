@@ -102,9 +102,14 @@ CREATE TABLE IF NOT EXISTS yearbook_ballots (
   id TEXT PRIMARY KEY,
   voter_roster_id TEXT NOT NULL REFERENCES yearbook_roster(id),
   category TEXT NOT NULL,
-  nominee_profile_id TEXT NOT NULL REFERENCES yearbook_profiles(id),
+  nominee_roster_id TEXT NOT NULL REFERENCES yearbook_roster(id),
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   UNIQUE (voter_roster_id, category)
+);
+
+CREATE TABLE IF NOT EXISTS yearbook_ballot_receipts (
+  voter_roster_id TEXT PRIMARY KEY REFERENCES yearbook_roster(id),
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 CREATE TABLE IF NOT EXISTS yearbook_award_ideas (
@@ -134,7 +139,7 @@ CREATE INDEX IF NOT EXISTS idx_yearbook_profiles_status ON yearbook_profiles(sta
 CREATE INDEX IF NOT EXISTS idx_yearbook_roster_sort ON yearbook_roster(sort_name);
 CREATE INDEX IF NOT EXISTS idx_yearbook_not_listed_status ON yearbook_not_listed(status);
 CREATE INDEX IF NOT EXISTS idx_yearbook_ballots_category ON yearbook_ballots(category);
-CREATE INDEX IF NOT EXISTS idx_yearbook_ballots_nominee ON yearbook_ballots(nominee_profile_id);
+CREATE INDEX IF NOT EXISTS idx_yearbook_ballots_nominee_roster ON yearbook_ballots(nominee_roster_id);
 CREATE INDEX IF NOT EXISTS idx_yearbook_rate_limits_expiry ON yearbook_rate_limits(expires_at);
 
 INSERT OR IGNORE INTO yearbook_settings (key, value) VALUES
@@ -142,7 +147,8 @@ INSERT OR IGNORE INTO yearbook_settings (key, value) VALUES
   ('class_year', '2024'),
   ('submission_deadline', '2026-11-03T23:59:00+01:00'),
   ('form_locked', '0'),
-  ('superlatives_enabled', '0'),
+  ('yearbook_published', '0'),
+  ('superlatives_enabled', '1'),
   ('results_published', '0'),
   ('auto_publish', '0'),
   ('turnstile_enabled', '0'),

@@ -205,27 +205,6 @@ async function loadProfile(id) {
     addSection(content, 'A memorable class moment', profile.memorable_moment);
     addSection(content, 'A message to the class', profile.class_message);
 
-    const photos = [];
-    if (profile.candid_url) photos.push({ src: profile.candid_url, label: 'Candid' });
-    if (profile.department_photo_url) photos.push({ src: profile.department_photo_url, label: 'Department' });
-    if (photos.length) {
-      const panel = el('div', 'yb-panel');
-      panel.appendChild(el('h2', '', 'More photos'));
-      const grid = el('div', 'yb-photo-grid');
-      grid.style.marginTop = '14px';
-      for (const photo of photos) {
-        const box = el('div', 'yb-photo-box');
-        box.style.cursor = 'default';
-        const img = document.createElement('img');
-        img.src = photo.src;
-        img.alt = photo.label;
-        img.loading = 'lazy';
-        box.appendChild(img);
-        grid.appendChild(box);
-      }
-      panel.appendChild(grid);
-      content.appendChild(panel);
-    }
   } catch (error) {
     content.innerHTML = '';
     const panel = el('div', 'yb-panel text-center');
@@ -246,8 +225,37 @@ async function loadGrid() {
 
   try {
     const data = await request('/api/yearbook/profiles');
-    const profiles = data.profiles || [];
     loading.style.display = 'none';
+
+    if (data.coming_soon) {
+      grid.innerHTML = '';
+      const card = el('div', 'yb-empty yb-coming-soon');
+      card.style.gridColumn = '1 / -1';
+      card.appendChild(el('div', 'yb-empty-icon', '📖'));
+      card.appendChild(el('h2', '', 'The yearbook is coming soon.'));
+      card.appendChild(
+        el(
+          'p',
+          '',
+          'Profiles are being collected right now. We will open the public yearbook when the class is ready.'
+        )
+      );
+      card.appendChild(
+        el(
+          'p',
+          '',
+          'Already submitted? Open the form again to preview your profile and finish your superlatives.'
+        )
+      );
+      const link = el('a', 'btn btn-primary', 'Open your submission');
+      link.href = '/yearbook-form.html';
+      link.style.marginTop = '12px';
+      card.appendChild(link);
+      grid.appendChild(card);
+      return;
+    }
+
+    const profiles = data.profiles || [];
     if (!profiles.length) {
       empty.style.display = 'block';
       return;
@@ -257,7 +265,6 @@ async function loadGrid() {
     loading.textContent = 'Could not load the yearbook. Refresh and try again.';
   }
 }
-
 document.getElementById('back-to-grid').addEventListener('click', () => {
   history.replaceState(null, '', '/yearbook.html');
   location.reload();

@@ -26,7 +26,6 @@
         <a href="/yearbook.html" class="nav-link active">Yearbook</a>
         <a href="/certificates.html" class="nav-link">Certificates</a>
         <a href="/awards.html" class="nav-link">Awards</a>
-        <a href="/superlatives.html" class="nav-link">Superlatives</a>
         <a href="/upload.html" class="nav-link">Upload</a>
       </div>
     </div>
@@ -38,19 +37,19 @@
         <p class="yb-eyebrow" id="page-eyebrow">Class of 2024</p>
         <h1 class="yb-title" id="page-title">Your yearbook profile.</h1>
         <p class="yb-subtitle" id="page-subtitle">
-          A few details, a few memories, and the photos that feel like you.
-          Your profile will appear in the yearbook after review.
+          A few details, a few memories, and a professional headshot. The public yearbook is
+          coming soon, but you can submit your profile now.
         </p>
         <p class="text-secondary" style="font-size:0.82rem;margin-top:14px;" id="deadline-line"></p>
         <p class="text-secondary" style="font-size:0.78rem;margin-top:8px;min-height:1.2em;" id="draft-status"></p>
       </header>
 
       <div class="yb-note" id="locked-note" style="display:none;margin-bottom:18px;">
-        <strong>The form is closed.</strong> You can still view the yearbook and superlatives.
+        <strong>The form is closed.</strong> Profiles are being collected while the yearbook is coming soon.
       </div>
 
       <div class="yb-progress" id="progress" aria-hidden="true">
-        <span class="active"></span><span></span><span></span><span></span><span></span>
+        <span class="active"></span><span></span><span></span><span></span><span></span><span></span><span></span>
       </div>
 
       <!-- Step 0: Identity -->
@@ -314,38 +313,56 @@
         </div>
       </section>
 
-      <!-- Step 4: Photos & consent -->
-      <section class="yb-panel yb-step" id="step-photos" data-step="4">
+      <!-- Step 4: Professional headshot -->
+      <section class="yb-panel yb-step" id="step-headshot" data-step="4">
         <div class="yb-section-head">
           <div>
-            <h2>Photos and permission.</h2>
-            <p>One clear portrait, one candid, and optionally a department or group photo.</p>
+            <h2>One professional headshot.</h2>
+            <p>Use one clear photo of your face. You can crop it right here before uploading.</p>
           </div>
         </div>
 
-        <div class="yb-photo-grid">
-          <div class="yb-photo-box" data-photo="portrait">
-            <input id="portrait-input" type="file" accept="image/*">
-            <img id="portrait-preview" alt="" style="display:none;">
-            <div class="placeholder" id="portrait-placeholder">
-              <strong>Portrait</strong>
-              <span>A clear photo of your face</span>
+        <div class="yb-headshot-layout">
+          <div>
+            <div class="yb-photo-box yb-headshot-box" data-photo="headshot">
+              <input id="headshot-input" type="file" accept="image/*">
+              <img id="headshot-preview" alt="Your professional headshot" style="display:none;">
+              <div class="placeholder" id="headshot-placeholder">
+                <strong>Professional headshot</strong>
+                <span>Click to choose a photo</span>
+              </div>
             </div>
+            <p class="hint" style="margin-top:10px;">
+              Square crop, face centered. JPG or PNG, up to 20 MB. We will resize it for the yearbook.
+            </p>
           </div>
-          <div class="yb-photo-box" data-photo="candid">
-            <input id="candid-input" type="file" accept="image/*">
-            <img id="candid-preview" alt="" style="display:none;">
-            <div class="placeholder" id="candid-placeholder">
-              <strong>Candid</strong>
-              <span>A photo that feels like you</span>
-            </div>
-          </div>
-          <div class="yb-photo-box" data-photo="department">
-            <input id="department-input" type="file" accept="image/*">
-            <img id="department-preview" alt="" style="display:none;">
-            <div class="placeholder" id="department-placeholder">
-              <strong>Department photo</strong>
-              <span>Optional group or department photo</span>
+
+          <div class="yb-headshot-guide">
+            <h3>What is a professional headshot?</h3>
+            <p class="text-secondary" style="font-size:0.84rem;line-height:1.6;margin:8px 0 12px;">
+              A simple shoulders-up photo where your face is easy to see. Think LinkedIn or a class
+              directory, not a party picture or a full-body shot.
+            </p>
+            <ul>
+              <li>Face the camera and keep a natural expression.</li>
+              <li>Use steady, front-facing light — avoid shadows or harsh glare.</li>
+              <li>Use a plain, uncluttered background.</li>
+              <li>Keep glasses clean and avoid heavy filters.</li>
+              <li>Crop so your head and shoulders fill the frame.</li>
+            </ul>
+            <div class="yb-headshot-examples">
+              <figure>
+                <img src="/images/headshots/headshot-example-1.jpg" alt="Example headshot with plain background">
+                <figcaption>Good light</figcaption>
+              </figure>
+              <figure>
+                <img src="/images/headshots/headshot-example-2.jpg" alt="Example headshot facing the camera">
+                <figcaption>Face visible</figcaption>
+              </figure>
+              <figure>
+                <img src="/images/headshots/headshot-example-3.jpg" alt="Example headshot with clean framing">
+                <figcaption>Clean crop</figcaption>
+              </figure>
             </div>
           </div>
         </div>
@@ -354,20 +371,21 @@
           <div class="yb-field full">
             <label class="yb-toggle">
               <input id="consent-accurate" type="checkbox">
-              <span>I confirm that the information and photos I am submitting are accurate and mine to share.</span>
+              <span>I confirm that the information and headshot I am submitting are accurate and mine to share.</span>
             </label>
             <p class="error" data-error="consent_accurate"></p>
           </div>
           <div class="yb-field full">
             <label class="yb-toggle">
               <input id="show-in-yearbook" type="checkbox" checked>
-              <span>Show my profile in the public yearbook after it is reviewed.</span>
+              <span>Include my profile when the public yearbook opens.</span>
             </label>
           </div>
         </div>
 
         <div class="yb-note" style="margin-top:16px;">
-          <strong>Privacy:</strong> your registration number and phone number are never shown publicly. You can edit or remove your profile later with your private edit link.
+          <strong>Submissions are final.</strong> Check everything on the next screen before you submit.
+          Your registration number and phone number are never shown publicly.
         </div>
 
         <p class="error" id="submit-error" role="alert" style="margin-top:10px;"></p>
@@ -375,30 +393,94 @@
         <div class="yb-actions">
           <button class="btn btn-secondary" type="button" data-back="3">Back</button>
           <div class="right">
-            <button class="btn btn-primary" id="submit-profile-btn" type="button">Submit profile</button>
+            <button class="btn btn-primary" type="button" data-next="5">Review profile</button>
           </div>
         </div>
       </section>
 
-      <!-- Step 5: Success -->
-      <section class="yb-panel yb-step" id="step-success" data-step="5">
+      <!-- Step 5: Final review -->
+      <section class="yb-panel yb-step" id="step-review" data-step="5">
         <div class="yb-section-head">
           <div>
-            <h2 id="success-title">Your profile is in.</h2>
-            <p id="success-message">It will appear in the yearbook after review.</p>
+            <h2>Check everything before you submit.</h2>
+            <p>This is your last chance to spot a mistake. You cannot edit your profile after submitting.</p>
           </div>
         </div>
-        <div class="yb-edit-link" id="edit-link-box" style="display:none;">
-          <strong>Keep this private edit link.</strong>
-          <p class="text-secondary" style="font-size:0.84rem;margin:0;">Use it to edit your profile later. Do not share it.</p>
-          <code id="edit-link-value"></code>
-          <button class="btn btn-sm btn-secondary" id="copy-edit-link" type="button">Copy link</button>
-        </div>
+        <div id="review-content" class="yb-review"></div>
+        <p class="error" id="review-error" role="alert" style="margin-top:10px;"></p>
         <div class="yb-actions">
-          <a class="btn btn-secondary" href="/yearbook.html">View the yearbook</a>
-          <a class="btn btn-primary" href="/">Back to the gallery</a>
+          <button class="btn btn-secondary" type="button" data-back="4">Back</button>
+          <div class="right">
+            <button class="btn btn-primary" id="submit-profile-btn" type="button">Submit profile &amp; continue</button>
+          </div>
         </div>
       </section>
+
+      <!-- Step 6: Submitted -->
+      <section class="yb-panel yb-step" id="step-success" data-step="6">
+        <div class="yb-section-head">
+          <div>
+            <h2>Your profile is saved.</h2>
+            <p>Nothing is public yet — the yearbook is coming soon. Here is exactly what you submitted.</p>
+          </div>
+        </div>
+        <div id="submitted-preview" class="yb-review"></div>
+        <div class="yb-actions">
+          <button class="btn btn-primary" id="continue-ballot-btn" type="button">Continue to superlatives</button>
+          <a class="btn btn-secondary" href="/yearbook.html">View the yearbook</a>
+          <a class="btn btn-secondary" href="/">Back to the gallery</a>
+        </div>
+      </section>
+
+      <!-- Step 7: Superlatives -->
+      <section class="yb-panel yb-step" id="step-ballot" data-step="7">
+        <div class="yb-section-head">
+          <div>
+            <h2>Class superlatives.</h2>
+            <p>Choose one classmate for each category. You cannot vote for yourself, and one ballot per person is counted.</p>
+          </div>
+        </div>
+        <div id="ballot-form" class="yb-ballot-grid"></div>
+        <div class="yb-field full" style="margin-top:18px;">
+          <label for="award-idea">Award we should have (optional)</label>
+          <input id="award-idea" type="text" maxlength="160" placeholder="Suggest a category we missed">
+        </div>
+        <div class="yb-note" style="margin-top:16px;">
+          <strong>Vote counts stay private.</strong> Results will be published later with the yearbook.
+        </div>
+        <p class="error" id="ballot-error" role="alert" style="margin-top:10px;"></p>
+        <div class="yb-actions">
+          <button class="btn btn-secondary" type="button" data-back="6">Back</button>
+          <div class="right">
+            <button class="btn btn-primary" id="submit-ballot-btn" type="button">Submit my ballot</button>
+          </div>
+        </div>
+      </section>
+
+      <dialog id="crop-dialog" class="yb-crop-dialog">
+        <div class="yb-section-head">
+          <div>
+            <h2>Crop your headshot</h2>
+            <p>Drag the photo to reposition it, then zoom until your face fills the square.</p>
+          </div>
+        </div>
+        <div class="yb-crop-stage">
+          <canvas id="crop-canvas" width="480" height="480" aria-label="Headshot crop preview"></canvas>
+        </div>
+        <div class="yb-crop-controls">
+          <button class="btn btn-sm btn-secondary" id="crop-zoom-out" type="button" aria-label="Zoom out">−</button>
+          <input id="crop-zoom" type="range" min="1" max="3" step="0.01" value="1" aria-label="Zoom">
+          <button class="btn btn-sm btn-secondary" id="crop-zoom-in" type="button" aria-label="Zoom in">+</button>
+          <button class="btn btn-sm btn-secondary" id="crop-reset" type="button">Reset</button>
+        </div>
+        <p class="hint">Keep your eyes and shoulders inside the square. We save a square JPEG.</p>
+        <div class="yb-actions">
+          <button class="btn btn-secondary" id="crop-cancel" type="button">Cancel</button>
+          <div class="right">
+            <button class="btn btn-primary" id="crop-confirm" type="button">Use this headshot</button>
+          </div>
+        </div>
+      </dialog>
     </div>
   </main>
 
