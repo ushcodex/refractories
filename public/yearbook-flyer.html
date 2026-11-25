@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Your page is waiting — U19CE Yearbook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,700;9..144,900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #07101d;
+      --deep: #0d1930;
+      --cream: #f7f2e8;
+      --lime: #d9ff43;
+      --coral: #ff5d52;
+      --violet: #a78bfa;
+      --muted: #a8b3c7;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 40px;
+      display: grid;
+      place-items: start center;
+      background: #05080d;
+      font-family: 'DM Sans', Arial, sans-serif;
+    }
+
+    .flyer {
+      position: relative;
+      width: 1240px;
+      min-height: 1754px;
+      overflow: hidden;
+      background: var(--ink);
+      color: #fff;
+      padding: 82px 88px 72px;
+      isolation: isolate;
+    }
+
+    .flyer::before {
+      content: '';
+      position: absolute;
+      z-index: -1;
+      width: 900px;
+      height: 900px;
+      right: -420px;
+      top: -360px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--violet) 0%, transparent 68%);
+      opacity: .55;
+    }
+
+    .flyer::after {
+      content: '';
+      position: absolute;
+      z-index: -1;
+      width: 700px;
+      height: 700px;
+      left: -360px;
+      bottom: -320px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--lime) 0%, transparent 68%);
+      opacity: .18;
+    }
+
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 24px;
+      border-bottom: 2px solid rgba(255,255,255,.18);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    .top b {
+      color: var(--lime);
+    }
+
+    .eyebrow {
+      margin-top: 60px;
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 21px;
+      font-weight: 700;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--coral);
+    }
+
+    .eyebrow::before {
+      content: '';
+      width: 56px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--coral);
+    }
+
+    h1 {
+      margin: 24px 0 18px;
+      max-width: 980px;
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 132px;
+      font-weight: 900;
+      line-height: .86;
+      letter-spacing: -.055em;
+    }
+
+    h1 em {
+      display: block;
+      color: var(--lime);
+      font-style: italic;
+    }
+
+    .lede {
+      max-width: 820px;
+      margin: 0 0 38px;
+      font-size: 32px;
+      line-height: 1.35;
+      color: #dbe3f0;
+    }
+
+    .lede strong {
+      color: #fff;
+    }
+
+    .deadline {
+      display: grid;
+      grid-template-columns: 170px 1fr;
+      gap: 28px;
+      align-items: center;
+      padding: 26px 34px;
+      background: var(--lime);
+      color: var(--ink);
+      border-radius: 28px;
+      transform: rotate(-1.2deg);
+      box-shadow: 0 18px 0 rgba(217,255,67,.18);
+    }
+
+    .deadline-date {
+      text-align: center;
+      border-right: 3px solid rgba(7,16,29,.22);
+      padding-right: 24px;
+    }
+
+    .deadline-date strong {
+      display: block;
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 104px;
+      line-height: .78;
+    }
+
+    .deadline-date span {
+      display: block;
+      margin-top: 10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 25px;
+      font-weight: 700;
+      letter-spacing: .2em;
+    }
+
+    .deadline-copy small {
+      display: block;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      opacity: .72;
+    }
+
+    .deadline-copy b {
+      display: block;
+      margin-top: 8px;
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 44px;
+      line-height: 1.06;
+    }
+
+    .preview {
+      margin-top: 56px;
+      position: relative;
+    }
+
+    .preview-label {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 20px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .preview-label::after {
+      content: '';
+      flex: 1;
+      height: 2px;
+      background: rgba(255,255,255,.16);
+    }
+
+    .card-frame {
+      position: relative;
+      transform: rotate(-1.8deg);
+      border-radius: 30px;
+      padding: 18px;
+      background: var(--cream);
+      box-shadow: 0 40px 90px rgba(0,0,0,.55);
+    }
+
+    .card-frame img {
+      display: block;
+      width: 100%;
+      border-radius: 18px;
+    }
+
+    .card-caption {
+      position: absolute;
+      right: -18px;
+      bottom: -30px;
+      padding: 16px 24px;
+      border-radius: 999px;
+      background: var(--coral);
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: .03em;
+      transform: rotate(1.8deg);
+      box-shadow: 0 12px 30px rgba(0,0,0,.35);
+    }
+
+    .cta {
+      margin-top: 72px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 40px;
+      align-items: center;
+      padding: 42px 46px;
+      border: 3px solid rgba(255,255,255,.18);
+      border-radius: 32px;
+      background: rgba(255,255,255,.045);
+    }
+
+    .cta h2 {
+      margin: 0 0 12px;
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 56px;
+      line-height: 1;
+    }
+
+    .cta p {
+      margin: 0;
+      font-size: 24px;
+      color: #cfd8e8;
+    }
+
+    .button {
+      display: grid;
+      place-items: center;
+      min-width: 300px;
+      padding: 28px 34px;
+      border-radius: 999px;
+      background: var(--lime);
+      color: var(--ink);
+      text-decoration: none;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 25px;
+      font-weight: 700;
+      letter-spacing: .02em;
+      box-shadow: 0 14px 0 rgba(217,255,67,.2);
+    }
+
+    .steps {
+      margin-top: 46px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .step {
+      padding: 24px 22px;
+      border-radius: 22px;
+      background: rgba(255,255,255,.055);
+      border: 1px solid rgba(255,255,255,.1);
+    }
+
+    .step b {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--lime);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+    }
+
+    .step span {
+      font-size: 21px;
+      color: #dbe3f0;
+    }
+
+    footer {
+      margin-top: 48px;
+      padding-top: 28px;
+      border-top: 2px solid rgba(255,255,255,.18);
+      display: flex;
+      justify-content: space-between;
+      gap: 30px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      letter-spacing: .05em;
+      color: var(--muted);
+    }
+
+    footer b {
+      color: #fff;
+    }
+
+    @media print {
+      @page { size: A4 portrait; margin: 0; }
+
+      body {
+        display: block;
+        padding: 0;
+        background: #fff;
+      }
+
+      .flyer {
+        width: 210mm;
+        min-height: 297mm;
+        box-shadow: none;
+      }
+
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <main class="flyer">
+    <div class="top">
+      <span><b>U19CE</b> Yearbook</span>
+      <span>Class of 2024</span>
+      <span>2026 edition</span>
+    </div>
+
+    <div class="eyebrow">The edition is being built</div>
+
+    <h1>Your page <em>is waiting.</em></h1>
+
+    <p class="lede">
+      The Class of 2024 story is coming together — one headshot, one honest page,
+      and one superlatives ballot at a time. <strong>Yours is not written yet.</strong>
+    </p>
+
+    <div class="deadline">
+      <div class="deadline-date">
+        <strong>27</strong>
+        <span>NOV</span>
+      </div>
+      <div class="deadline-copy">
+        <small>Submission deadline</small>
+        <b>Friday, 11:59pm<br>West Africa Time</b>
+      </div>
+    </div>
+
+    <section class="preview">
+      <div class="preview-label">A first look from the edition</div>
+      <div class="card-frame">
+        <img src="/images/campaign/hayatu-card.png" alt="Preview yearbook card for Hayatu Umar Yahaya">
+        <div class="card-caption">Hayatu Umar Yahaya · “BYC”</div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div>
+        <h2>Make your submission.</h2>
+        <p>One professional headshot. A few quick prompts. Then cast your superlatives votes.</p>
+      </div>
+      <a class="button" href="/yearbook-form.html">Start your page →</a>
+    </section>
+
+    <div class="steps">
+      <div class="step"><b>01 / Headshot</b><span>One clean photo, cropped right in your browser.</span></div>
+      <div class="step"><b>02 / Your page</b><span>Short prompts. No long essays. Final preview before locking.</span></div>
+      <div class="step"><b>03 / Ballot</b><span>Vote in all 11 superlative categories. Results stay private until publication.</span></div>
+    </div>
+
+    <footer>
+      <span><b>u19ce.pages.dev/yearbook-form.html</b></span>
+      <span>Class access required · Submissions are final</span>
+    </footer>
+  </main>
+</body>
+</html>

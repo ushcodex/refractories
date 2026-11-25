@@ -283,6 +283,8 @@ async function validateMetadata(env, metadata) {
   if (!STATES.includes(stateOfOrigin)) errors.state_of_origin = 'Choose a state';
 
   const hometown = cleanText(metadata.hometown, 40);
+  const headshotCaption = cleanText(metadata.headshot_caption, 80);
+  const selfWords = cleanText(metadata.self_words, 60);
   const whatsapp = cleanText(metadata.whatsapp, 30);
   if (whatsapp && !/^[0-9+\-()\s]{7,30}$/.test(whatsapp)) {
     errors.whatsapp = 'Invalid phone number';
@@ -300,6 +302,8 @@ async function validateMetadata(env, metadata) {
   const tiktok = cleanText(metadata.tiktok, 100);
   const facebook = cleanText(metadata.facebook, 150);
   const website = cleanText(metadata.website, 200);
+  const classEmoji = cleanText(metadata.class_emoji, 8);
+  const themeSong = cleanText(metadata.theme_song, 100);
 
   const courseRows = await db
     .prepare('SELECT code FROM yearbook_courses WHERE active = 1')
@@ -339,6 +343,9 @@ async function validateMetadata(env, metadata) {
   if (!motto) errors.motto = 'Required';
 
   const classMessage = cleanText(metadata.class_message, 300);
+  const unknownFact = cleanText(metadata.unknown_fact, 160);
+  const futureSelf = cleanText(metadata.future_self, 160);
+  const directionLine = cleanText(metadata.direction_line, 120);
   const relationshipStatus = cleanText(metadata.relationship_status, 30);
 
   const consentAccurate = boolValue(metadata.consent_accurate);
@@ -352,11 +359,18 @@ async function validateMetadata(env, metadata) {
     metadata.show_birthday === undefined ? true : boolValue(metadata.show_birthday);
 
   const flags = [];
-  if (memorableMoment.length > 200 || classMessage.length > 240) {
+  if (
+    memorableMoment.length > 200 ||
+    classMessage.length > 240 ||
+    unknownFact.length > 140 ||
+    futureSelf.length > 140
+  ) {
     flags.push('long_text');
   }
   const emojiText = [
     nickname,
+    headshotCaption,
+    selfWords,
     hobby,
     sideSkill,
     instagram,
@@ -365,10 +379,14 @@ async function validateMetadata(env, metadata) {
     tiktok,
     facebook,
     website,
+    themeSong,
     memorableMoment,
     classWord,
     motto,
     classMessage,
+    unknownFact,
+    futureSelf,
+    directionLine,
   ].join(' ');
   if (/[\u{1F300}-\u{1FAFF}]/u.test(emojiText)) flags.push('emoji');
 
@@ -381,6 +399,8 @@ async function validateMetadata(env, metadata) {
       birthMonth,
       stateOfOrigin,
       hometown,
+      headshotCaption,
+      selfWords,
       whatsapp,
       hobby,
       sideSkill,
@@ -390,6 +410,8 @@ async function validateMetadata(env, metadata) {
       tiktok,
       facebook,
       website,
+      classEmoji,
+      themeSong,
       favouriteCourse,
       toughestCourse,
       hardestLevel,
@@ -399,6 +421,9 @@ async function validateMetadata(env, metadata) {
       classWord,
       motto,
       classMessage,
+      unknownFact,
+      futureSelf,
+      directionLine,
       relationshipStatus,
       consentAccurate,
       showInYearbook,
@@ -504,16 +529,18 @@ async function saveProfile(request, env) {
     birth_month: data.birthMonth,
     state_of_origin: data.stateOfOrigin,
     hometown: data.hometown,
+    headshot_caption: data.headshotCaption,
+    self_words: data.selfWords,
     whatsapp: data.whatsapp,
     whatsapp_opt_in: data.includePhone ? 1 : 0,
     hobby: data.hobby,
     side_skill: data.sideSkill,
     outside_tags: '[]',
     outside_line: data.sideSkill,
-    unknown_fact: '',
+    unknown_fact: data.unknownFact,
     hobbies: JSON.stringify([data.hobby]),
     direction: '',
-    direction_line: '',
+    direction_line: data.directionLine,
     favourite_course: data.favouriteCourse,
     toughest_course: data.toughestCourse,
     hardest_level: data.hardestLevel,
@@ -522,6 +549,9 @@ async function saveProfile(request, env) {
     memorable_moment: data.memorableMoment,
     class_word: data.classWord,
     motto: data.motto,
+    class_emoji: data.classEmoji,
+    theme_song: data.themeSong,
+    future_self: data.futureSelf,
     instagram: data.instagram,
     x_handle: data.xHandle,
     linkedin: data.linkedin,
@@ -786,6 +816,8 @@ async function getAdminProfiles(env) {
       status: row.status,
       display_name: row.display_name,
       nickname: row.nickname,
+      headshot_caption: row.headshot_caption || '',
+      self_words: row.self_words || '',
       birth_day: row.birth_day,
       birth_month: row.birth_month,
       state_of_origin: row.state_of_origin,
@@ -819,7 +851,10 @@ async function getAdminProfiles(env) {
       most_teaching_lecturer: row.most_teaching_lecturer || '',
       memorable_moment: row.memorable_moment || '',
       class_word: row.class_word,
+      class_emoji: row.class_emoji || '',
       motto: row.motto,
+      theme_song: row.theme_song || '',
+      future_self: row.future_self || '',
       social_platform: row.social_platform || '',
       social_handle: row.social_handle || '',
       class_message: row.class_message || '',

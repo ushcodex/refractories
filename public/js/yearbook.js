@@ -327,6 +327,8 @@ function collectMetadata() {
     birth_month: $('birth-month').value,
     state_of_origin: $('state-of-origin').value,
     hometown: $('hometown').value.trim(),
+    headshot_caption: $('headshot-caption').value.trim(),
+    self_words: $('self-words').value.trim(),
     whatsapp: $('whatsapp').value.trim(),
     include_phone: $('include-phone').checked,
     show_birthday: $('show-birthday').checked,
@@ -338,6 +340,8 @@ function collectMetadata() {
     tiktok: $('tiktok').value.trim(),
     facebook: $('facebook').value.trim(),
     website: $('website').value.trim(),
+    class_emoji: $('class-emoji').value.trim(),
+    theme_song: $('theme-song').value.trim(),
     favourite_course: $('favourite-course').value,
     toughest_course: $('toughest-course').value,
     hardest_level: $('hardest-level').value,
@@ -347,6 +351,9 @@ function collectMetadata() {
     class_word: $('class-word').value.trim(),
     motto: $('motto').value.trim(),
     class_message: $('class-message').value.trim(),
+    unknown_fact: $('unknown-fact').value.trim(),
+    future_self: $('future-self').value.trim(),
+    direction_line: $('direction-line').value.trim(),
     relationship_status: $('relationship-status').value,
     consent_accurate: $('consent-accurate').checked,
     show_in_yearbook: $('show-in-yearbook').checked,
@@ -363,6 +370,8 @@ function applyMetadata(data) {
   $('birth-month').value = data.birth_month ? String(data.birth_month) : '';
   $('state-of-origin').value = data.state_of_origin || '';
   $('hometown').value = data.hometown || '';
+  $('headshot-caption').value = data.headshot_caption || '';
+  $('self-words').value = data.self_words || '';
   $('whatsapp').value = data.whatsapp || '';
   $('include-phone').checked = data.include_phone === undefined ? true : Boolean(data.include_phone);
   $('show-birthday').checked = data.show_birthday === undefined ? true : Boolean(data.show_birthday);
@@ -379,6 +388,8 @@ function applyMetadata(data) {
     (data.social_platform === 'Other' && /^https?:\/\//i.test(data.social_handle || '')
       ? data.social_handle
       : '');
+  $('class-emoji').value = data.class_emoji || '';
+  $('theme-song').value = data.theme_song || '';
   $('favourite-course').value = data.favourite_course || '';
   $('toughest-course').value = data.toughest_course || '';
   $('hardest-level').value = data.hardest_level || '';
@@ -388,6 +399,9 @@ function applyMetadata(data) {
   $('class-word').value = data.class_word || '';
   $('motto').value = data.motto || '';
   $('class-message').value = data.class_message || '';
+  $('unknown-fact').value = data.unknown_fact || '';
+  $('future-self').value = data.future_self || '';
+  $('direction-line').value = data.direction_line || '';
   $('relationship-status').value = data.relationship_status || '';
   $('consent-accurate').checked = Boolean(data.consent_accurate);
   $('show-in-yearbook').checked = data.show_in_yearbook !== false;
@@ -727,6 +741,8 @@ function renderProfilePreview(targetId, data, photoUrl) {
       'About you',
       [
         summaryRow('Nickname', data.nickname),
+        summaryRow('Headshot caption', data.headshot_caption),
+        summaryRow('Three words', data.self_words),
         summaryRow('Birthday', birthday),
         summaryRow('State of origin', data.state_of_origin),
         summaryRow('Hometown', data.hometown),
@@ -750,8 +766,13 @@ function renderProfilePreview(targetId, data, photoUrl) {
       'Your words',
       [
         summaryRow('Class word', data.class_word),
+        summaryRow('Class emoji', data.class_emoji),
         summaryRow('Motto', data.motto),
+        summaryRow('Theme song', data.theme_song),
         summaryRow('Memorable moment', data.memorable_moment || classes.memorable_moment),
+        summaryRow('Hidden talent / surprise', data.unknown_fact),
+        summaryRow('Ten years from now', data.future_self),
+        summaryRow('Next chapter', data.direction_line || data.direction),
         summaryRow('Message to the class', data.class_message),
       ]
     ),
@@ -767,6 +788,7 @@ function renderProfilePreview(targetId, data, photoUrl) {
       <div class="yb-review-body">
         <h3>${safe(displayName)}</h3>
         ${data.nickname ? `<p class="yb-review-nickname">“${safe(data.nickname)}”</p>` : ''}
+        ${data.headshot_caption ? `<p class="yb-review-caption">${safe(data.headshot_caption)}</p>` : ''}
         <div class="yb-review-columns">${blocks.join('')}</div>
       </div>
     </div>
@@ -1159,11 +1181,13 @@ function setupEvents() {
 
   const watched = [
     'nickname', 'birth-day', 'birth-month', 'state-of-origin', 'hometown',
-    'whatsapp', 'include-phone', 'show-birthday', 'hobby', 'side-skill',
-    'instagram', 'x-handle', 'linkedin', 'tiktok', 'facebook', 'website',
-    'favourite-course', 'toughest-course', 'hardest-level', 'favourite-lecturer',
+    'headshot-caption', 'self-words', 'whatsapp', 'include-phone', 'show-birthday',
+    'hobby', 'side-skill', 'instagram', 'x-handle', 'linkedin', 'tiktok',
+    'facebook', 'website', 'class-emoji', 'theme-song', 'favourite-course',
+    'toughest-course', 'hardest-level', 'favourite-lecturer',
     'most-teaching-lecturer', 'memorable-moment', 'class-word', 'motto',
-    'class-message', 'relationship-status', 'consent-accurate', 'show-in-yearbook',
+    'class-message', 'unknown-fact', 'future-self', 'direction-line',
+    'relationship-status', 'consent-accurate', 'show-in-yearbook',
   ];
   for (const id of watched) {
     const element = $(id);

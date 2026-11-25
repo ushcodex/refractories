@@ -865,9 +865,16 @@
 }
 
 .yb-review-nickname {
-  margin: 0 0 16px;
+  margin: 0 0 4px;
   color: var(--accent);
   font-size: 0.88rem;
+}
+
+.yb-review-caption {
+  margin: 0 0 16px;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-style: italic;
 }
 
 .yb-review-columns {
