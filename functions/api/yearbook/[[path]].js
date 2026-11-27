@@ -146,7 +146,28 @@ async function validateIdentity(request, env) {
     env.SESSION_SECRET
   );
 
-  return json({ ok: true, token, name: displayName });
+  const existingProfile = await db
+    .prepare('SELECT * FROM yearbook_profiles WHERE roster_id = ?')
+    .bind(roster.id)
+    .first();
+  const receipt = await db
+    .prepare('SELECT 1 FROM yearbook_ballot_receipts WHERE voter_roster_id = ?')
+    .bind(roster.id)
+    .first();
+
+  return json({
+    ok: true,
+    token,
+    name: displayName,
+    profile: existingProfile
+      ? {
+          ...publicProfile(existingProfile),
+          status: existingProfile.status,
+          submitted_at: existingProfile.submitted_at,
+        }
+      : null,
+    ballot_submitted: Boolean(receipt),
+  });
 }
 
 async function getCourses(env) {

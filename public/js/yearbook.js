@@ -580,7 +580,26 @@ async function verifyIdentity() {
     } catch {
       // Session storage can be unavailable; the in-memory token still works.
     }
-    showToast(`Welcome, ${data.name}.`, 'success');
+
+    if (data.profile) {
+      showExistingSubmission(data.profile, data.ballot_submitted, data.name, true);
+      if (wantsSuperlatives() && !data.ballot_submitted) {
+        renderBallot();
+        setStep(7);
+        showToast('Profile already submitted — cast your Superlatives ballot now.', 'success');
+      } else {
+        setStep(6);
+        showToast('You have already submitted your profile.', 'success');
+      }
+      return;
+    }
+
+    showToast(
+      wantsSuperlatives()
+        ? `Welcome, ${data.name}. Submit your yearbook profile first, then vote in Superlatives.`
+        : `Welcome, ${data.name}.`,
+      'success'
+    );
     setStep(1);
   } catch (error) {
     showGlobalError('identity-error', error.data?.error || error.message);
@@ -1016,7 +1035,18 @@ async function submitBallot() {
         suggestion: $('award-idea').value.trim(),
       }),
     });
+    state.ballotSubmitted = true;
     button.textContent = 'Ballot submitted';
+    const continueBtn = $('continue-ballot-btn');
+    if (continueBtn) {
+      continueBtn.disabled = true;
+      continueBtn.textContent = 'Superlatives ballot already submitted';
+    }
+    const subSubtitle = $('submitted-subtitle');
+    if (subSubtitle) {
+      subSubtitle.textContent =
+        'Your yearbook profile is already saved (shown below), and your Superlatives ballot has also been recorded.';
+    }
     showToast('Ballot recorded. Results will be published with the yearbook.', 'success');
   } catch (error) {
     button.disabled = false;
@@ -1047,6 +1077,49 @@ function readStoredIdentity() {
   }
 }
 
+function wantsSuperlatives() {
+  return new URLSearchParams(window.location.search).get('tab') === 'superlatives';
+}
+
+function showExistingSubmission(profile, ballotSubmitted, displayName, isReturning = true) {
+  state.submittedProfile = {
+    ...profile,
+    display_name: displayName || profile.display_name || state.rosterName,
+    include_phone: profile.include_phone,
+  };
+  state.ballotSubmitted = Boolean(ballotSubmitted);
+  renderProfilePreview('submitted-preview', state.submittedProfile, state.submittedProfile.portrait_url);
+
+  const heading = $('submitted-heading');
+  const subtitle = $('submitted-subtitle');
+  const continueBtn = $('continue-ballot-btn');
+
+  if (isReturning) {
+    if (heading) heading.textContent = 'You have already submitted your profile.';
+    if (subtitle) {
+      subtitle.textContent = state.ballotSubmitted
+        ? 'Your yearbook profile is already saved (shown below), and your Superlatives ballot has also been recorded.'
+        : 'Your yearbook profile is already saved (shown below). You have not voted in Superlatives yet — click below to cast your ballot.';
+    }
+  } else {
+    if (heading) heading.textContent = 'Your profile is saved.';
+    if (subtitle) {
+      subtitle.textContent =
+        'Nothing is public yet — the yearbook is coming soon. Here is exactly what you submitted.';
+    }
+  }
+
+  if (continueBtn) {
+    if (state.ballotSubmitted) {
+      continueBtn.disabled = true;
+      continueBtn.textContent = 'Superlatives ballot already submitted';
+    } else {
+      continueBtn.disabled = false;
+      continueBtn.textContent = 'Vote in superlatives';
+    }
+  }
+}
+
 async function loadSubmittedState(identity) {
   state.identityToken = identity.token;
   state.rosterId = identity.roster_id || '';
@@ -1058,16 +1131,7 @@ async function loadSubmittedState(identity) {
       body: JSON.stringify({ token: identity.token }),
     });
     if (!data.profile) return false;
-    state.submittedProfile = {
-      ...data.profile,
-      display_name: data.roster_name || state.rosterName,
-      include_phone: data.profile.include_phone,
-    };
-    renderProfilePreview('submitted-preview', state.submittedProfile, state.submittedProfile.portrait_url);
-    if (data.ballot_submitted) {
-      $('continue-ballot-btn').disabled = true;
-      $('continue-ballot-btn').textContent = 'Ballot already submitted';
-    }
+    showExistingSubmission(data.profile, data.ballot_submitted, data.roster_name || state.rosterName, true);
     return true;
   } catch {
     sessionStorage.removeItem(IDENTITY_KEY);
@@ -1244,9 +1308,24 @@ async function init() {
       $('verify-btn').disabled = false;
     }
 
+    if (wantsSuperlatives()) {
+      document.querySelectorAll('.nav-link').forEach((link) => {
+        if (link.getAttribute('href') === '/superlatives.html') {
+          link.classList.add('active');
+        } else if (link.getAttribute('href') === '/yearbook.html') {
+          link.classList.remove('active');
+        }
+      });
+    }
+
     const stored = readStoredIdentity();
     if (stored && (await loadSubmittedState(stored))) {
-      setStep(6);
+      if (wantsSuperlatives() && !state.ballotSubmitted) {
+        renderBallot();
+        setStep(7);
+      } else {
+        setStep(6);
+      }
       return;
     }
 
