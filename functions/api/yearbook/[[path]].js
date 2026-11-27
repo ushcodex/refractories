@@ -25,10 +25,10 @@ const STATES = [
   'Cross River', 'Delta', 'Ebonyi', 'Edo', 'Ekiti', 'Enugu', 'FCT', 'Gombe', 'Imo',
   'Jigawa', 'Kaduna', 'Kano', 'Katsina', 'Kebbi', 'Kogi', 'Kwara', 'Lagos', 'Nasarawa',
   'Niger', 'Ogun', 'Ondo', 'Osun', 'Oyo', 'Plateau', 'Rivers', 'Sokoto', 'Taraba',
-  'Yobe', 'Zamfara',
+  'Yobe', 'Zamfara', 'International', 'N/A',
 ];
 
-const HARDEST_LEVELS = ['100L', '200L', '300L', '400L', '500L'];
+const HARDEST_LEVELS = ['100L', '200L', '300L', '400L', '500L', 'N/A'];
 
 const SUPERLATIVES = [
   { key: 'most_likely_billionaire', label: 'Most likely to become a billionaire' },
@@ -269,20 +269,22 @@ async function validateMetadata(env, metadata) {
   const nickname = cleanText(metadata.nickname, 25);
   if (!nickname) errors.nickname = 'Required';
 
-  const birthDay = Number.parseInt(metadata.birth_day, 10);
-  if (!Number.isInteger(birthDay) || birthDay < 1 || birthDay > 31) {
+  const rawBirthDay = String(metadata.birth_day ?? '').trim();
+  const birthDay = rawBirthDay === 'N/A' ? 0 : Number.parseInt(rawBirthDay, 10);
+  if (!Number.isInteger(birthDay) || birthDay < 0 || birthDay > 31) {
     errors.birth_day = 'Invalid day';
   }
 
-  const birthMonth = Number.parseInt(metadata.birth_month, 10);
-  if (!Number.isInteger(birthMonth) || birthMonth < 1 || birthMonth > 12) {
+  const rawBirthMonth = String(metadata.birth_month ?? '').trim();
+  const birthMonth = rawBirthMonth === 'N/A' ? 0 : Number.parseInt(rawBirthMonth, 10);
+  if (!Number.isInteger(birthMonth) || birthMonth < 0 || birthMonth > 12) {
     errors.birth_month = 'Invalid month';
   }
 
   const stateOfOrigin = cleanText(metadata.state_of_origin, 40);
-  if (!STATES.includes(stateOfOrigin)) errors.state_of_origin = 'Choose a state';
+  if (!STATES.includes(stateOfOrigin)) errors.state_of_origin = 'Choose a state or International';
 
-  const hometown = cleanText(metadata.hometown, 40);
+  const hometown = cleanText(metadata.hometown, 60);
   const headshotCaption = cleanText(metadata.headshot_caption, 80);
   const selfWords = cleanText(metadata.self_words, 60);
   const whatsapp = cleanText(metadata.whatsapp, 30);
@@ -311,10 +313,10 @@ async function validateMetadata(env, metadata) {
   const courseSet = new Set(courseRows.results.map((row) => row.code));
 
   const favouriteCourse = cleanText(metadata.favourite_course, 20);
-  if (!courseSet.has(favouriteCourse)) errors.favourite_course = 'Choose a course';
+  if (favouriteCourse !== 'N/A' && !courseSet.has(favouriteCourse)) errors.favourite_course = 'Choose a course';
 
   const toughestCourse = cleanText(metadata.toughest_course, 20);
-  if (!courseSet.has(toughestCourse)) errors.toughest_course = 'Choose a course';
+  if (toughestCourse !== 'N/A' && !courseSet.has(toughestCourse)) errors.toughest_course = 'Choose a course';
 
   const hardestLevel = cleanText(metadata.hardest_level, 10);
   if (!HARDEST_LEVELS.includes(hardestLevel)) errors.hardest_level = 'Choose a level';
@@ -327,6 +329,7 @@ async function validateMetadata(env, metadata) {
   const resolveLecturer = (value) => {
     const cleaned = cleanText(value, 100);
     if (!cleaned) return '';
+    if (cleaned === 'N/A') return 'N/A';
     return lecturerById.get(cleaned) || (lecturerByName.has(cleaned) ? cleaned : '');
   };
 

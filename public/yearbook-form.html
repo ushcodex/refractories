@@ -146,13 +146,13 @@
             <p class="error" data-error="birth_month"></p>
           </div>
           <div class="yb-field" data-field="state_of_origin">
-            <label for="state-of-origin">State of origin <span class="required">*</span></label>
+            <label for="state-of-origin">State of origin / International <span class="required">*</span></label>
             <select id="state-of-origin"></select>
             <p class="error" data-error="state_of_origin"></p>
           </div>
           <div class="yb-field" data-field="hometown">
-            <label for="hometown">Hometown (optional)</label>
-            <input id="hometown" type="text" maxlength="40" placeholder="Town or city">
+            <label for="hometown">Hometown / City &amp; Country (optional)</label>
+            <input id="hometown" type="text" maxlength="60" placeholder="Town, city, country, or N/A">
           </div>
           <div class="yb-field full" data-field="headshot_caption">
             <label for="headshot-caption">One-line caption for your headshot (optional)</label>
@@ -335,6 +335,7 @@
             <label for="relationship-status">Relationship status (optional)</label>
             <select id="relationship-status">
               <option value="">Prefer not to say</option>
+              <option value="N/A">N/A</option>
               <option value="Single">Single</option>
               <option value="In a relationship">In a relationship</option>
               <option value="It's complicated">It's complicated</option>

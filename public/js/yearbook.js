@@ -230,10 +230,19 @@ function populateCourses() {
   placeholderF.value = '';
   placeholderF.textContent = 'Choose a course';
   favourites.appendChild(placeholderF);
+  const naF = document.createElement('option');
+  naF.value = 'N/A';
+  naF.textContent = 'N/A';
+  favourites.appendChild(naF);
+
   const placeholderT = document.createElement('option');
   placeholderT.value = '';
   placeholderT.textContent = 'Choose a course';
   toughest.appendChild(placeholderT);
+  const naT = document.createElement('option');
+  naT.value = 'N/A';
+  naT.textContent = 'N/A';
+  toughest.appendChild(naT);
 
   const groups = new Map();
   for (const course of state.courses) {
@@ -268,8 +277,9 @@ function populateCourses() {
 }
 
 function populateLecturers() {
-  populateSelect($('favourite-lecturer'), state.lecturers, 'Choose a lecturer', 'name', 'name');
-  populateSelect($('most-teaching-lecturer'), state.lecturers, 'None', 'name', 'name');
+  const lecturersWithNA = [{ name: 'N/A' }, ...state.lecturers];
+  populateSelect($('favourite-lecturer'), lecturersWithNA, 'Choose a lecturer', 'name', 'name');
+  populateSelect($('most-teaching-lecturer'), lecturersWithNA, 'None', 'name', 'name');
 }
 
 function populateStaticSelects() {
@@ -279,6 +289,10 @@ function populateStaticSelects() {
   dayPlaceholder.value = '';
   dayPlaceholder.textContent = 'Day';
   day.appendChild(dayPlaceholder);
+  const dayNA = document.createElement('option');
+  dayNA.value = '0';
+  dayNA.textContent = 'N/A';
+  day.appendChild(dayNA);
   for (let i = 1; i <= 31; i++) {
     const option = document.createElement('option');
     option.value = String(i);
@@ -292,6 +306,10 @@ function populateStaticSelects() {
   monthPlaceholder.value = '';
   monthPlaceholder.textContent = 'Month';
   month.appendChild(monthPlaceholder);
+  const monthNA = document.createElement('option');
+  monthNA.value = '0';
+  monthNA.textContent = 'N/A';
+  month.appendChild(monthNA);
   const months = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December',
@@ -306,7 +324,7 @@ function populateStaticSelects() {
   populateSelect(
     $('state-of-origin'),
     (state.config?.states || []).map((name) => ({ name })),
-    'Choose a state',
+    'Choose a state or International',
     'name',
     'name'
   );
@@ -366,8 +384,8 @@ function legacySocialValue(data, platform) {
 
 function applyMetadata(data) {
   $('nickname').value = data.nickname || '';
-  $('birth-day').value = data.birth_day ? String(data.birth_day) : '';
-  $('birth-month').value = data.birth_month ? String(data.birth_month) : '';
+  $('birth-day').value = data.birth_day !== undefined && data.birth_day !== null && data.birth_day !== '' ? String(data.birth_day) : '';
+  $('birth-month').value = data.birth_month !== undefined && data.birth_month !== null && data.birth_month !== '' ? String(data.birth_month) : '';
   $('state-of-origin').value = data.state_of_origin || '';
   $('hometown').value = data.hometown || '';
   $('headshot-caption').value = data.headshot_caption || '';
